@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="normal/base::layout(~{::section})">
+<head>
+
+</head>
+<body>
+
+<section>
+    <div class="card">
+        <div class="card-body drive-body">
+            <div class="circle" data-bs-toggle="modal" href="#exampleModalToggle" role="button">
+                <div class="uploaded_data" style="
+    margin-top: -24px;
+">0KB
+                </div>
+            </div>
+            <input type="file" name="file[]" multiple id="file">
+
+            <!-- Drag and Drop container-->
+            <div class="upload-area" id="uploadfile">
+                <h1>Drag and Drop file here<br/>Or<br/>Click to select file</h1>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+             tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalToggleLabel">Uploading files</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <span class="u_data">0MB / 0MB</span>
+                        <div class="progress">
+                            <div class="progress-bar p-text" role="progressbar" style="width: 0%;" aria-valuenow="25"
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger stopvideo" type="button">
+                            Cancel upload
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+question,options1,options2,options3,options4,answer
+ Spring framework offers us multiple ways to define the scope of a bean. Which one of the following is not the correct way of defining a ‘request’ scope ?,By using Annotations ,By implementing Interfaces provided by Spring framework,By extending classes provided by Spring framework,By using XML configuration,c
+Who is capable of maintaining a registry of different beans and their dependencies in a Spring based web application?,BeanFactory class,BeanFactory interface, beanFactory method,Client Application,a

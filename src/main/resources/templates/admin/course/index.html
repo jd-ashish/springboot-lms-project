@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+	<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+
+</head>
+
+<body>
+
+	<section>
+
+
+		<div
+			class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+			<div th:utext="${utils.backHeading('Courses')}"></div>
+
+			<div class="btn-toolbar mb-2 mb-md-0" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+				<div class="btn-group me-2">
+					<button type="button" class="btn btn-sm btn-outline-secondary toogle" to-id=".create-course">Create
+						course</button>
+				</div>
+			</div>
+		</div>
+
+		<form
+			th:class="@{${edit!=null}? 'row justify-content-end create-course':'row justify-content-end hide create-course'}"
+			sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')" th:action="@{/course/create}" th:object="${course}" method="POST"
+			enctype="utf8">
+			<div th:if="${edit!=null}">
+				<input type="hidden" name="id" th:value="${edit}">
+			</div>
+			<div class="col-auto">
+				<label for="CourseName" class="visually-hidden">Name</label>
+				<input type="text" placeholder="Course name" name="course_name" th:value="${name}" class="form-control"
+					id="CourseName">
+			</div>
+			<div class="col-auto">
+				<label for="topicID" class="visually-hidden">Topic</label>
+				<input type="text" class="form-control" id="topicID" th:value="${topic}" name="course_topic"
+					placeholder="Topic">
+			</div>
+			<div class="col-auto">
+				<button type="submit" class="btn btn-primary mb-3">Update course</button>
+			</div>
+		</form>
+
+		<div th:if="${courseList.size()==0}">
+			<center class="center">
+				No any course found!
+			</center>
+		</div>
+
+		<div class="table-responsive" th:if="${courseList.size()>0}">
+			<table class="data-table table table-striped">
+				<thead>
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Name</th>
+						<th scope="col">Topic</th>
+						<th scope="col">Created At</th>
+						<th scope="col">Action</th>
+					</tr>
+				</thead>
+				<tbody class="table-body-sn">
+
+
+					<th:block th:each="course : ${courseList}">
+						<tr>
+							<td>1</td>
+
+							<td><a th:href="@{'/course/'+${utils.uri(course.course_name,false)}+'/'+${course.id}}"
+									th:text="${course.course_name}"></a></td>
+							<td th:text="${course.course_topic}">data</td>
+							<td th:text="${course.createdAt}">placeholder</td>
+							<td>
+								<!-- Example single danger button -->
+								<div class="btn-group">
+									<button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+										data-bs-toggle="dropdown" aria-expanded="false">
+										Action
+									</button>
+									<ul class="dropdown-menu">
+										<li><a class="dropdown-item"
+												th:href="@{'/lesson/create/'+${utils.uri(course.course_name,false)}+'/'+${course.id}}"
+												sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">Create lesson</a></li>
+										<li><a class="dropdown-item" href="#"
+												sec:authorize="hasRole('ROLE_STUDENT')">In-Role course</a></li>
+										<li sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')"><a class="dropdown-item"
+												th:href="@{'/exercise/create/'+${course.id}}">Create exercise</a></li>
+										<li><a class="dropdown-item" th:href="@{'/course/delete/'+${course.id}}">Delete
+												course</a></li>
+										<li><a class="dropdown-item"
+												th:href="@{'/course?editCourse='+${course.id}+'&name='+${course.course_name}+'&topic='+${course.course_topic}}">Edit
+												course</a></li>
+									</ul>
+								</div>
+							</td>
+						</tr>
+					</th:block>
+
+
+
+				</tbody>
+			</table>
+		</div>
+
+	</section>
+
+</body>
+
+</html>

@@ -1,0 +1,37 @@
+<th:block th:each="data,i : ${questionReviewList}">
+    <div class="mb-3">
+
+        <pre><code class="language-html" th:text="@{${i.index+1}+' ) '+${data.question}}"></code></pre>
+        <ul class="list-group">
+            <li
+                th:class="${(data.userSelectAnswer!='null')? (utils.isWrong(data.userSelectAnswer,'a',data.correctAnswer)==1)? 'correct-answer list-group-item': (utils.isWrong(data.userSelectAnswer,'a',data.correctAnswer)==2)? 'wrong-answer list-group-item':'list-group-item':'list-group-item'}">
+                <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option1"
+                    checked="">
+                <label class="form-check-label c-p" for="option1">a) <span th:text="${data.optionA}"></span></label>
+            </li>
+            <li 
+            th:class="${(data.userSelectAnswer!='null')? (utils.isWrong(data.userSelectAnswer,'b',data.correctAnswer)==1)? 'correct-answer list-group-item': (utils.isWrong(data.userSelectAnswer,'b',data.correctAnswer)==2)? 'wrong-answer list-group-item':'list-group-item':'list-group-item'}"
+            >
+                <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option2">
+                <label class="form-check-label c-p" for="option2">b) <span th:text="${data.optionB}"></span></label>
+            </li>
+            <li 
+            th:class="${(data.userSelectAnswer!='null')? (utils.isWrong(data.userSelectAnswer,'c',data.correctAnswer)==1)? 'correct-answer list-group-item': (utils.isWrong(data.userSelectAnswer,'c',data.correctAnswer)==2)? 'wrong-answer list-group-item':'list-group-item':'list-group-item'}"
+
+            >
+                <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option3">
+                <label class="form-check-label c-p" for="option3">c) <span th:text="${data.optionC}"></span></label>
+            </li>
+            <li 
+            th:class="${(data.userSelectAnswer!='null')? (utils.isWrong(data.userSelectAnswer,'d',data.correctAnswer)==1)? 'correct-answer list-group-item': (utils.isWrong(data.userSelectAnswer,'d',data.correctAnswer)==2)? 'wrong-answer list-group-item':'list-group-item':'list-group-item'}"
+            >
+                <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option4">
+                <label class="form-check-label c-p" for="option4">d) <span th:text="${data.optionD}"></span></label>
+            </li>
+        </ul>
+
+        <p class="answer">correct Answer: <span th:text="${data.correctAnswer}"></span></p>
+
+    </div>
+
+</th:block>

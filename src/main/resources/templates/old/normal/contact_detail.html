@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="normal/base::layout(~{::section})">
+<head>
+
+</head>
+<body>
+
+<section>
+    <div class="card">
+        <div class="card-body" th:if="${contact}">
+            <div class="container text-center">
+                <img th:src="@{'/img/'+${contact.image}}" width="200px" alt="Profile picture">
+                <h3 th:text="${contact.name}"></h3>
+                <table class="table">
+
+                    <tr>
+                        <th scope="row">#ID</th>
+                        <th scope="col" th:text="${contact.id}"></th>
+                    </tr>
+                    <tr>
+                        <th scope="row">Name</th>
+                        <td th:text="${contact.name}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Second Name</th>
+                        <td th:text="${contact.secondName}"></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Email</th>
+                        <td th:text="${contact.email}"></td>
+                    </tr>
+
+                </table>
+
+                <div class="description mt-3">
+                    <th:block th:utext="${contact.description}"></th:block>
+                </div>
+                <div class="container mt-3">
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                    <button class="btn btn-success btn-sm">Update</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading('Enrolled Student')}"></div>
+            
+        </div>
+
+        <div class="table-responsive" style="height: 99vh;">
+
+            <div th:if="${userList.size()==0}">
+                <center class="center">
+                    No any Enrolled Student found!
+                </center>
+            </div>
+            <table class="data-table table table-striped" th:if="${userList.size()>0}">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">name</th>
+                        <th scope="col">email</th>
+                        <th scope="col">role</th>
+                        <th scope="col">Enable</th>
+                        <th scope="col">Created At</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body-sn">
+
+                    <th:block th:each="data : ${userList}">
+                        <tr>
+                            <td>1</td>
+                            <td th:text="${data.name}">random</td>
+                            <td th:text="${data.email}">random</td>
+                            <td th:text="${utils.Role(data.role)}">random</td>
+                            <td th:text="${data.enable}">random</td>
+                            <td th:text="${data.createdAt}">placeholder</td>
+
+                        </tr>
+                    </th:block>
+
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</body>
+
+</html>

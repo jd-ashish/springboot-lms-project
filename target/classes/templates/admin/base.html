@@ -1,0 +1,1673 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <title th:text="${title}"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/apple-touch-icon.png"
+        sizes="180x180">
+    <link rel="icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-32x32.png" sizes="32x32"
+        type="image/png">
+    <link rel="icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon-16x16.png" sizes="16x16"
+        type="image/png">
+    <!--<link rel="manifest" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/manifest.json"> -->
+    <link rel="mask-icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/safari-pinned-tab.svg"
+        color="#712cf9">
+    <link rel="icon" href="https://getbootstrap.com/docs/5.2/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#712cf9">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" type="text/css">
+    <link href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap5.min.css" rel="stylesheet" type="text/css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+
+
+    <div th:each="script : ${scripts}">
+        <div th:utext="${script}"></div>
+    </div>
+
+
+    <style>
+        .center {
+            font-size: xx-large;
+            margin-top: 52px;
+            padding-bottom: 75px;
+            color: #ff0000e6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="pre-loader">
+        <div class="lds-dual-ring"></div>
+    </div>
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#" th:text="${user!=null}? ${user.name}:''"></a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <input class="form-control search-all form-control-dark w-100 rounded-0 border-0" type="text"
+            placeholder="Search" aria-label="Search">
+        <div class="navbar-nav logout-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" th:href="@{/logout}">Sign out</a>
+            </div>
+        </div>
+        <div class="navbar-nav exam-activity-nav hide" style="padding-right:30px">
+            <div class="nav-item text-nowrap">
+                <!-- <a class="nav-link px-3">Activity</a> -->
+                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Exam tracking</button>
+            </div>
+        </div>
+    </header>
+
+
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasRightLabel">Exam student tracking</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <table class="table">
+                <thead class="dropdown-exam-activity">
+
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+
+
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a th:class="@{${title=='dashboard'}? 'nav-link active':'nav-link'}" aria-current="page"
+                                th:href="@{/dashboard}">
+                                <span data-feather="home" class="align-text-bottom"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/course}">
+                                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                                Course
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/lesson}">
+                                <span data-feather="file" class="align-text-bottom"></span>
+                                Lesson
+                            </a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/students}">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Enrolled Students
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/exercise }">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Exercise
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/student/enrollment-request}">
+                                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                                Enrollment request
+                            </a>
+                        </li>
+                        <li class="nav-item hide">
+                            <a class="nav-link" href="#">
+                                <span data-feather="layers" class="align-text-bottom"></span>
+                                Integrations
+                            </a>
+                        </li>
+                    </ul>
+
+
+                    <!-- AdminParts will here -->
+                    <ul class="nav flex-column" sec:authorize="hasRole('ROLE_ADMIN')">
+
+                        <li class="nav-item">
+                            <a th:class="@{${title=='admin Course list'}? 'nav-link active':'nav-link'}"
+                                th:href="@{/admin/course}">
+                                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                                Course list
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/lesson}">
+                                <span data-feather="file" class="align-text-bottom"></span>
+                                Lesson
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin/users}">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/exercise }">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Exercise
+                            </a>
+                        </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_TEACHER')">
+                            <a class="nav-link" th:href="@{/student/enrollment-request}">
+                                <span data-feather="bar-chart-2" class="align-text-bottom"></span>
+                                Enrollment request
+                            </a>
+                        </li>
+                        <li class="nav-item hide">
+                            <a class="nav-link" href="#">
+                                <span data-feather="layers" class="align-text-bottom"></span>
+                                Integrations
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- AdminParts end -->
+
+
+
+                    <h6 class="sidebar-heading  d-flex justify-content-between
+                    align-items-center px-3 mt-4 mb-1 text-muted text-uppercase"
+                        sec:authorize="hasRole('ROLE_STUDENT')">
+                        <span>Courses</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="plus-circle" class="align-text-bottom"></span>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2" sec:authorize="hasRole('ROLE_STUDENT')">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{'/student/all-course'}">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                All courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{'/student/my-course'}">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                My course
+                            </a>
+                        </li>
+                    </ul>
+                    <h6 sec:authorize="hasRole('ROLE_STUDENT')"
+                        class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Saved reports</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="plus-circle" class="align-text-bottom"></span>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2" sec:authorize="hasRole('ROLE_STUDENT')">
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{'/report/course-list'}">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                Exam report
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex collaps-btn
+                        align-items-center px-3 mt-4 
+                        mb-1 text-muted text-uppercase">
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="arrow-left" class="align-text-bottom"></span>
+                        </a>
+                        <span>collaps</span>
+                    </h6>
+                </div>
+            </nav>
+
+            <div class="questionBox col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" style="width:0px;">
+                <div class="row questionBoxList">
+                </div>
+
+                <button type="button" class="btn bnt-info btn-exam-submit-bottom submit-exam-paper w-100"
+                    style="bottom: 0px;position: absolute;background: #008000c9;color: white;border-radius: 0px; display: none;">Submit</button>
+
+                <video id="vid" style="
+                        bottom: 38px;
+                        position: absolute;
+                        color: white;
+                        border-radius: 0px;
+                        width: -webkit-fill-available;
+                        width: -moz-available;
+                    "></video>
+
+
+
+                <div id="content">
+                    <canvas id="canvas" width="320" height="240"
+                        style="    z-index: 0;   position: fixed;  top: -212px;"></canvas>
+                    <a href="#" class="detectar" style="    z-index: 0;   position: fixed;  top: -212px;">Detectar
+                        faces</a>
+                    <br />
+                    <img class="" style="    z-index: 0;   position: fixed;  top: -212px;" />
+
+                </div>
+
+            </div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <h6 class="sidebar-heading d-flex collaps-btn-remove
+                        align-items-center px-3 mt-4 
+                        mb-1 text-muted text-uppercase" style="display: none !important;">
+                    <a class="link-secondary" href="#" aria-label="Add a new report">
+                        <span data-feather="arrow-right" class="align-text-bottom"></span>
+                    </a>
+                    <span></span>
+                </h6>
+                <div th:replace="${content}"></div>
+
+            </main>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <!-- <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script th:src="@{'/webrtc/js/main.js'}" async></script>
+-->
+    <script src="http://files.rafaelwendel.com/facedetection/js/face.js"></script>
+    <script src="http://files.rafaelwendel.com/facedetection/js/ccv.js"></script>
+    <script src="http://files.rafaelwendel.com/facedetection/js/jquery.facedetection.js"></script>
+    <script src="http://files.rafaelwendel.com/facedetection/js/face.js"></script>
+
+
+    <script>
+        $(function () {
+            $('.detectar').click(function () {
+                var $this = $(this);
+
+                var coords = $('img').faceDetection({
+                    complete: function () {
+                        $this.text('Face encontrada!');
+                    },
+                    error: function (img, code, message) {
+                        $this.text('error!');
+                        alert('Erro: ' + message);
+                    }
+                });
+                console.log(coords);
+
+                var activity = '';
+                for (var i = 0; i < coords.length; i++) {
+                    activity += '<tr><th>confidence</th><td>' + coords[i].confidence + '</td></tr>';
+                    activity += '<tr><th>height</th><td>' + coords[i].height + '</td></tr>';
+                    activity += '<tr><th>neighbour</th><td>' + coords[i].neighbour + '</td></tr>';
+                    activity += '<tr><th>offsetX</th><td>' + coords[i].offsetX + '</td></tr>';
+                    activity += '<tr><th>offsetY</th><td>' + coords[i].offsetY + '</td></tr>';
+                    activity += '<tr><th>positionX</th><td>' + coords[i].positionX + '</td></tr>';
+                    activity += '<tr><th>positionY</th><td>' + coords[i].positionY + '</td></tr>';
+                    activity += '<tr><th>width</th><td>' + coords[i].width + '</td></tr>';
+                    activity += '<tr><th>x</th><td>' + coords[i].x + '</td></tr>';
+                    activity += '<tr><th>y</th><td>' + coords[i].y + '</td></tr>';
+
+                    console.log("confidence ===> " + coords[i].confidence);
+                    console.log("height ===> " + coords[i].height);
+                    console.log("neighbour ===> " + coords[i].neighbour);
+                    console.log("offsetX ===> " + coords[i].offsetX);
+                    console.log("offsetY ===> " + coords[i].offsetY);
+                    console.log("positionX ===> " + coords[i].positionX);
+                    console.log("positionY ===> " + coords[i].positionY);
+                    console.log("width ===> " + coords[i].width);
+                    console.log("x ===> " + coords[i].x);
+                    console.log("y ===> " + coords[i].y);
+                }
+                if (activity === '') {
+
+                } else {
+                    $(".dropdown-exam-activity").html(activity);
+                }
+
+            });
+            return false;
+        });
+
+
+
+        // function isStartExam(){
+        //     var ten = $("#ten-countdown").val();
+        //     console.log(ten);
+        //     if(ten===''){
+        //         isStartExam();
+        //         return false;
+        //     }
+        //     return true;
+        // }
+        // console.log(isStartExam());
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+            if (window.location.pathname.split("/")[2] != undefined && window.location.pathname.split("/")[2] == "test") {
+
+                function checkMedia() {
+                    var mediaDevices = navigator.mediaDevices;
+                    mediaDevices.getUserMedia({
+                        video: true,
+                        audio: true,
+                    }).then((stream) => { }).catch(function (data) {
+                        window.location.href = '/exam/configuration';
+                    });
+                }
+
+                var but = document.getElementById("but");
+                var video = document.getElementById("vid");
+                var mediaDevices = navigator.mediaDevices;
+                vid.muted = true;
+                var permitionErrorCout = 0;
+
+                but.addEventListener("click", () => {
+                    $("#but").hide();
+
+                    // Accessing the user camera and video.
+                    mediaDevices
+                        .getUserMedia({
+                            video: true,
+                            audio: true,
+                        })
+                        .then((stream) => {
+
+                            // Changing the source of video to current stream.
+                            video.srcObject = stream;
+                            console.log(stream);
+                            video.addEventListener("loadedmetadata", () => {
+
+                                video.play();
+                            });
+                            setInterval(function () {
+                                checkMedia();
+                            }, 1000);
+                        })
+                        .catch(function (data) {
+                            permitionErrorCout++;
+                            $("#but").show();
+                            if (confirm(data) == true) {
+                                $("#but").click();
+                            } else {
+
+                            }
+
+                        });
+                    if (permitionErrorCout >= 2) {
+                        window.location.href = '/exam/configuration';
+                    }
+                });
+
+                setInterval(function () {
+                    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                    let image_data_url = canvas.toDataURL('image/jpeg');
+                    $("img").attr("src", image_data_url);
+                    // data url of the image
+                    // console.log(image_data_url);
+                }, 100);
+                // $("#but").click();
+                // $("#but").click();
+                // $("#but").hide();
+                setInterval(function () {
+                    $(".detectar").click();
+                }, 5002);
+            }
+
+        });
+
+        $(document).ready(function () {
+            var datatablePage = 0;
+
+            var permitionErrorCout = 0;
+            var isMedia = false;
+            var mediaPermitionTime = 0;
+
+            setInterval(function () {
+                navigator.permissions.query({ name: "camera" })
+                    .then(({ state }) => fun(state),
+                        e => error(e));
+            }, 1000);
+            function error(e) {
+                console.log(e.name + ": " + e.message)
+                if (e.match("camera")) {
+                    window.location.href = '/exam/configuration'
+                }
+            }
+            function fun(state) {
+                mediaPermitionTime++;
+                if (mediaPermitionTime >= 50) {
+                    if (state == "prompt") {
+                        window.location.href = '/exam/configuration'
+                    }
+                }
+
+            }
+
+            function checkMedia() {
+
+
+
+                var mediaDevices = navigator.mediaDevices;
+                mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true,
+                }).then((stream) => { }).catch(function (data) {
+                    window.location.href = '/exam/configuration';
+                });
+            }
+            function media() {
+                var video = document.getElementById("vid");
+                var mediaDevices = navigator.mediaDevices;
+                vid.muted = true;
+
+
+                mediaDevices
+                    .getUserMedia({
+                        video: true,
+                        audio: true,
+                    })
+                    .then((stream) => {
+                        isMedia = true;
+
+                        // Changing the source of video to current stream.
+                        video.srcObject = stream;
+                        console.log(stream);
+                        video.addEventListener("loadedmetadata", () => {
+
+                            video.play();
+                        });
+
+                        setInterval(function () {
+                            checkMedia();
+                        }, 1000);
+                    })
+                    .catch(function (data) {
+                        permitionErrorCout++;
+                        $("#but").show();
+                        if (confirm(data) == true) {
+                            $("#but").click();
+                        } else {
+
+                        }
+                        return 'false';
+                    });
+                if (permitionErrorCout >= 2) {
+                    window.location.href = '/exam/configuration';
+                }
+                return 'ture';
+            }
+
+            $(document).on('click', '.open-win', function () {
+                window.location.href = $(this).attr('href');
+            })
+
+            $(document).on('click', '.review-question-list', function () {
+
+                $(".pre-loader").show();
+                var view = $(this).attr("view");
+                var modal = $(this).attr("modal");
+                if (modal === '1') {
+                    $("#review-questions").modal("show")
+                }
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: "GET",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (result) {
+                        $(".pre-loader").hide();
+                        $(view).html(result);
+                    },
+                });
+            })
+
+            if (window.location.pathname.split("/")[1] != undefined && window.location.pathname.split("/")[1] == "report") {
+                reportLayout();
+            }
+
+            if (window.location.pathname.split("/")[2] != undefined && window.location.pathname.split("/")[2] == "test") {
+                $("#sidebarMenu").css("width", "0px");
+                $(".questionBox").css("width", "200px");
+                $(".btn-exam-submit-bottom").show();
+                $(".search-all").hide();
+                $(".logout-nav").hide();
+                $(".exam-activity-nav").show();
+                $("#startExamTour").modal("show");
+
+                //examPaper();
+                countdownTour("#startExamTour", 1, "#counter", 60);
+
+                // var wincount = 0;
+                // $(window).on("blur focus", function (e) {
+                //     var prevType = $(this).data("prevType");
+
+                //     if (prevType != e.type) {   //  reduce double fire issues
+                //         switch (e.type) {
+                //             case "blur":
+                //                 if (wincount < 4) {
+                //                     $("#win-count").text(++wincount);
+                //                     $('#wincount').modal("show")
+                //                     countdownTour("#wincount", 0, "#counter-resume", 60);
+                //                 }
+
+                //                 break;
+                //             case "focus":
+                //                 if (wincount >=4) {
+                //                     $('#wincount').modal("hide")
+                //                     $('#wincount-end').modal("show")
+                //                     $("#win-count-end").text(wincount);
+                //                     countdownTour("#wincount-end", 2, "#counter-resume-end", 60);
+
+                //                 }
+                //                 break;
+                //         }
+                //     }
+
+                //     $(this).data("prevType", e.type);
+                // })
+
+
+            }
+
+
+
+            var uri = window.location.href.split("/");
+            var u = '';
+            for (var i = 0; i < uri.length; i++) {
+                if (i < 6) {
+                    u += uri[i] + '/';
+                }
+            }
+            if (uri[7] != undefined && uri[7] == "view-content-details") {
+                $(".finish-btn").attr("href", u.substr(0, u.length - 1));
+            }
+            var isExamStart = false;
+            $(".isExamStart").val("false");
+            function countdownTour(element, type, counter, sec) {
+                var seconds = sec;
+                function tick() {
+                    seconds--;
+                    $(counter).html("" + (seconds < 10 ? "0" : "") + String(seconds));
+                    console.log(seconds);
+                    if (seconds == 50 || seconds == 40 || seconds == 30) {
+                        media();
+                    }
+
+                    if (seconds > 0) {
+                        setTimeout(tick, 1000);
+                    } else {
+
+
+
+                        if (isExamStart == false) {
+                            if (type == 1) {
+                                examPaper();
+                                $(".isExamStart").val("true");
+                            }
+                        }
+                        if (type == 2) {
+                            submitExam();
+                        }
+
+                        $(element).modal("hide");
+                    }
+                }
+                tick();
+            }
+
+
+            $(document).on('click', ".start-exam-tour", function () {
+
+
+                if (isMedia == false) {
+                    media();
+                    alert("Please provide media permission. If there is a mistake, the recet permission is granted.")
+                } else {
+                    $("#startExamTour").modal("hide");
+                    isExamStart = true;
+                    $(".isExamStart").val("true");
+                    examPaper();
+                }
+
+            })
+            $(document).on('click', ".Enroll_course", function () {
+                alert("please enrole the course");
+            })
+            $(document).on('click', ".Waiting_for_confirmation", function () {
+                alert("Waiting for confirmation ");
+            })
+            $(document).on('click', ".Enroll_successfully", function () {
+                //write code if need
+            })
+
+            function examPaper() {
+                var settings = {
+                    "url": $(".main-content").attr("action") + "/" + [[${(questionExercise != null) ? questionExercise.numberOfQuestionPerStudent : 10}]],
+                "method": "POST",
+                    "contentType": false,
+                };
+
+            $.ajax(settings).done(function (response) {
+                $("#preview_questions").val(response);
+                var questionBoxList = '';
+                $.each(response, function (i, dataEntry) {     // or response['data']
+                    testQuestion(dataEntry, 1, dataEntry[0], JSON.parse(dataEntry[0].options), dataEntry.length - 1, 0);
+
+                    countdown("ten-countdown", [[${(questionExercise != null) ? questionExercise.time : 0}]], 0);
+                //dataEntry.length
+
+                for (var j = 0; j < dataEntry.length; j++) {
+                    questionBoxList += '<div class="col-sm-3 questionBoxInput' + (j + 1) + '" style="margin-right: 1px;">' +
+                        '<input type="text" class="questionBoxInput" value="' + (j + 1) + '" readonly>' +
+                        '</div>';
+                }
+            });
+            $(".questionBoxList").append(questionBoxList);
+        });
+
+            }
+        var testQuestions;
+        var totalQuestion;
+        const qn = new Map();
+        const allQuestionAnswer = new Map();
+        function testQuestion(list, i, data, options, total, start, saveOption) {
+            for (let index = 0; index < list.length; index++) {
+                const element = list[index];
+                if (!allQuestionAnswer.has(element.id)) {
+                    allQuestionAnswer.set(element.id, "x")
+                }
+            }
+            console.log(allQuestionAnswer)
+            $(".total-question").text(list.length);
+            totalQuestion = list.length;
+            testQuestions = list;
+            var pre = start - 1;
+            var next = start + 1;
+            var preBtn = "", nextBtn = "";
+            if (pre >= 0) {
+                preBtn = '<button class="btn btn-info float-start mt-2 text-light previus-question" next="' + pre + '">&lt;&lt; &Previus</button>';
+            }
+            if (next != total + 1) {
+                nextBtn = '<button class="btn btn-info float-end mt-2 text-light next-question" next="' + next + '">Next &gt;&gt;</button>';
+            } else {
+                nextBtn = '<button class="btn btn-info float-end mt-2 text-light submit-question" >Submit &gt;&gt;</button>';
+            }
+            var inputa = '', inputB = '', inputC = '', inputD = '';
+            if (saveOption != null) {
+                if (saveOption === "a") {
+                    inputa = '<input checked class="form-check-input test-question-option-a' + i + ' test-question-option' + i + '  me-1 c-p" type="radio" name="Options" value="" id="option1">';
+                } else {
+                    inputa = '<input  class="form-check-input test-question-option-a' + i + ' test-question-option' + i + '  me-1 c-p" type="radio" name="Options" value="" id="option1">';
+                }
+                if (saveOption === "b") {
+                    inputB = '<input checked class="form-check-input test-question-option-b' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option2">';
+                } else {
+                    inputB = '<input class="form-check-input test-question-option-b' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option2">';
+                }
+                if (saveOption === "c") {
+                    inputC = '<input checked class="form-check-input test-question-option-c' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option3">';
+                } else {
+                    inputC = '<input class="form-check-input test-question-option-c' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option3">';
+                }
+                if (saveOption === "d") {
+                    inputD = '<input checked class="form-check-input test-question-option-d' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option4">';
+                } else {
+                    inputD = '<input class="form-check-input test-question-option-d' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option4">';
+                }
+
+            } else {
+                inputa = '<input class="form-check-input input-check test-question-option-a' + i + ' test-question-option' + i + '  me-1 c-p" type="radio" name="Options" value="" id="option1">';
+                inputB = '<input class="form-check-input input-check test-question-option-b' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option2">';
+                inputC = '<input class="form-check-input input-check test-question-option-c' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option3">';
+                inputD = '<input class="form-check-input input-check test-question-option-d' + i + ' test-question-option' + i + ' me-1 c-p" type="radio" name="Options" value="" id="option4">';
+            }
+
+            var qna = `<div class="mb-3">
+                              <pre><code class="language-html"> Q`+ i + `)` + data.question + `</code></pre>
+                            <ul class="list-group" total="`+ total + `">
+                                <li class="list-group-item check-checkbox"
+                                check-box-list=".questionBoxInput`+ i + ` > .questionBoxInput"
+                                question-d="`+ data.id + `" option="a"
+                                checkbod-id=".test-question-option-a`+ i + `">
+                                    `+ inputa + `
+                                    <label class="form-check-label c-p" for="option1">a) `+ options.a + `</label>
+                                </li>
+                                <li class="list-group-item check-checkbox"
+                                check-box-list=".questionBoxInput`+ i + ` > .questionBoxInput"
+                                    question-d="`+ data.id + `" option="b"
+                                    checkbod-id=".test-question-option-b`+ i + `">
+                                    `+ inputB + `
+                                    <label class="form-check-label c-p" for="option2">b) `+ options.b + `</label>
+                                </li>
+                                <li class="list-group-item check-checkbox" 
+                                check-box-list=".questionBoxInput`+ i + ` > .questionBoxInput"
+                                    question-d="`+ data.id + `" option="c"
+                                    checkbod-id=".test-question-option-c`+ i + `">
+                                    `+ inputC + `
+                                    <label class="form-check-label c-p" for="option3">c) `+ options.c + `</label>
+                                </li>
+                                <li class="list-group-item check-checkbox"
+                                check-box-list=".questionBoxInput`+ i + ` > .questionBoxInput"
+                                    question-d="`+ data.id + `" option="d"
+                                    checkbod-id=".test-question-option-d`+ i + `">
+                                    `+ inputD + `
+                                    <label class="form-check-label c-p" for="option4">d) `+ options.d + `</label>
+                                </li>
+                            </ul>
+
+                            <p class="answer clearSections c-p" 
+                            check-box-list=".questionBoxInput`+ i + ` > .questionBoxInput"
+                            question-d="`+ data.id + `" clear-option=".test-question-option` + i + `">Clear section</p>
+                            `+ nextBtn + `
+                            `+ preBtn + `
+                        </div>`;
+
+            $(".main-content").html(qna);
+        }
+
+        $(document).on('change', ".input-check", function () {
+
+        });
+
+        $(document).on('click', ".submit-question", function () {
+            $("#staticBackdrop").modal("show");
+            $(".total-solved-questions").text(qn.size);
+            $(".total-skip-questions").text(totalQuestion - qn.size);
+        });
+
+        $(document).on('click', ".questionBoxInput", function () {
+            var val = parseInt($(this).val()) - 1;
+            testQuestion(testQuestions, val + 1, testQuestions[val],
+                JSON.parse(testQuestions[val].options), testQuestions.length - 1, val, qn.get("" + testQuestions[val].id));
+        });
+        $(document).on("click", ".check-checkbox", function () {
+            $($(this).attr("checkbod-id")).prop('checked', true);
+            $($(this).attr("check-box-list")).css("background", "green");
+            var questionId = $(this).attr("question-d");
+            var option = $(this).attr("option");
+            qn.set(questionId, option);
+            var qid = parseInt(questionId);
+            if (allQuestionAnswer.has(qid)) {
+                allQuestionAnswer.set(qid, option);
+            }
+            console.log(allQuestionAnswer)
+        })
+        $(document).on("click", ".clearSections", function () {
+            var clearOptionClass = $(this).attr("clear-option");
+            $($(this).attr("check-box-list")).css("background", "red");
+            var questionId = $(this).attr("question-d");
+            qn.delete("" + questionId);
+            $(clearOptionClass).prop('checked', false);
+
+            var qid = parseInt(questionId);
+            if (allQuestionAnswer.has(qid)) {
+                allQuestionAnswer.set(qid, "x");
+            }
+            console.log(allQuestionAnswer)
+        })
+        $(document).on("click", "button.btn.btn-info.float-start.mt-2.text-light.previus-question", function () {
+
+
+            var nextId = parseInt($(this).attr("next"));
+            console.log(testQuestions[nextId]);
+            console.log(nextId)
+            console.log("finaqndnsjdhjskhd " + qn.get("" + testQuestions[nextId].id))
+            testQuestion(testQuestions, nextId + 1, testQuestions[nextId],
+                JSON.parse(testQuestions[nextId].options), testQuestions.length - 1, nextId, qn.get("" + testQuestions[nextId].id));
+        })
+        $(document).on("click", "button.btn.btn-info.float-end.mt-2.text-light.next-question", function () {
+            console.log(qn);
+
+            var nextId = parseInt($(this).attr("next"));
+            console.log(testQuestions[nextId]);
+            console.log(nextId)
+
+            testQuestion(testQuestions, nextId + 1, testQuestions[nextId],
+                JSON.parse(testQuestions[nextId].options), testQuestions.length - 1, nextId, qn.get("" + testQuestions[nextId].id));
+        })
+        var element, endTime, hours, mins, msLeft, time;
+        function countdown(elementName, minutes, seconds) {
+
+            function twoDigits(n) { return (n <= 9 ? "0" + n : n); }
+
+            element = document.getElementById(elementName);
+            endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
+            updateTimer();
+
+
+            function updateTimer() {
+                msLeft = endTime - (+new Date);
+
+                if (msLeft < 1000) {
+                    $(".pre-loader").show();
+                    submitExam();
+                    element.innerHTML = "Time is up!";
+                    // $("#staticBackdrop").modal("show");
+                    // $(".total-solved-questions").text(qn.size);
+                    // $(".total-skip-questions").text(totalQuestion-qn.size);
+                } else {
+                    time = new Date(msLeft);
+                    hours = time.getUTCHours();
+                    mins = time.getUTCMinutes();
+                    element.innerHTML = (hours ? hours + ':' + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
+                    setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+                }
+            }
+        }
+        function mapToObj(map) {
+            var obj = {}
+            map.forEach(function (v, k) {
+                obj[k] = v
+            })
+            return obj
+        }
+
+
+
+        function submitExam() {
+            var myString = "string value"
+
+            var myJson = {};
+            myJson.myMap = mapToObj(qn);
+            myJson.msLeft = msLeft;
+            myJson.allQuestionAnswer = mapToObj(allQuestionAnswer);
+            myJson.course = $(".courseIdForExam").attr("course-id");
+            myJson.teacher = $(".courseIdForExam").attr("teacher-id");
+            myJson.exerciseId = $(".courseIdForExam").attr("exercise-id");
+            myJson.totalQuestion = totalQuestion;
+            myJson.totalSolvedQuestion = qn.size;
+            myJson.totalUnSolvedQuestion = totalQuestion - qn.size;
+            var json = JSON.stringify(myJson);
+
+            console.log(json)
+            $.ajax({
+                type: "POST",
+                url: $(".examSubmit").attr("examSubmit"),
+                async: false,
+                data: json,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    window.location.href = "/exam/response/" + data.id
+                    $(".pre-loader").hide();
+                },
+                error: function () {
+                    $(".pre-loader").hide();
+                    window.location.reload();
+                }
+            });
+        }
+        $(document).on('click', ".submit-exam-paper", function () {
+            $(".pre-loader").show();
+            setInterval(function () {
+                submitExam();
+            }, 3000);
+        })
+        $(".accept-enroll-request").click(function () {
+            var url = $(this).attr("in-roll-action");
+            var enrollmentId = $(this).attr("enrollment-id");
+            var current = this;
+            var i;
+            buttonProgressLoop(current, true);
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+                data: JSON.stringify({ enrollmentId: enrollmentId }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    var json = JSON.parse(data);
+                    if (json.error) {
+                        alert(json.message);
+                    } else {
+                        alert(json.message);
+                    }
+                    i = 1;
+                },
+                error: function () {
+                    i = 1;
+                    alert('Error occured');
+                }
+            });
+            if (i > 0) {
+                setTimeout(function () {
+                    buttonProgressLoop(current, false);
+                    window.location.reload();
+                }, 500);
+
+            }
+        })
+        $(".cancel-enroll-request").click(function () {
+            var url = $(this).attr("in-roll-action");
+            var enrollmentId = $(this).attr("enrollment-id");
+            var current = this;
+            var i;
+            buttonProgressLoop(current, true);
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+                data: JSON.stringify({ enrollmentId: enrollmentId }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    var json = JSON.parse(data);
+                    if (json.error) {
+                        alert(json.message);
+                    } else {
+                        alert(json.message);
+                    }
+                    i = 1;
+                },
+                error: function () {
+                    i = 1;
+                    alert('Error occured');
+                }
+            });
+            if (i > 0) {
+                setTimeout(function () {
+                    buttonProgressLoop(current, false);
+                    window.location.reload();
+                }, 500);
+
+            }
+        })
+        $(".in-role-course").click(function () {
+            buttonProgressLoop(this, true);
+            var url = $(this).attr("in-roll-action");
+            var current = this;
+
+            var i;
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+                data: JSON.stringify({ courseId: $(this).attr("course-id"), uEmail: $(this).attr("uEmail") }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                    var json = JSON.parse(data);
+                    if (json.error) {
+                        alert(json.message);
+                    } else {
+                        alert(json.message);
+                    }
+                    i = 1;
+                },
+                error: function () {
+                    i = 1;
+                    alert('Error occured');
+                }
+            });
+            console.log(i);
+            if (i > 0) {
+                setTimeout(function () {
+                    buttonProgressLoop(current, false);
+                    window.location.reload();
+                }, 1000);
+
+            }
+        })
+        $(".lessonClick").click(function () {
+            $(".lesson-content-body").hide();
+            $(".lesson-content-full").show();
+        })
+        $(".view-content-details").click(function () {
+            //$("#exampleModalFullscreen").modal('show');
+            $(".lesson-content").html($(this).attr('content'));
+            $(".lesson-content-body").show();
+            $(".lesson-content-full").hide();
+            $(".content-title").html($(this).attr('content-title'));
+
+            var url = $(this).attr('url');
+            $.ajax({
+                type: "POST",
+                url: url,
+                async: false,
+                data: JSON.stringify({ courseId: $(this).attr("course-id"), data: $(this).attr("data"), type: $(this).attr("type") }),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function () {
+
+                }
+            });
+        });
+        var count = 1;
+
+        $.fn.dataTable.ext.errMode = 'none';
+        var datatable = $('.data-table').DataTable({
+            responsive: true
+        }).on('error.dt', function (e, settings, techNote, message) {
+            console.log('An error has been reported by DataTables: ', message);
+        });
+
+        var table = $('#myTable').DataTable({
+            ajax: {
+                url: $('#myTable').attr('action'),
+                method: 'POST',
+                dataSrc: 'data'
+            },
+            columns: [
+                {
+                    data: null,
+                    render: function (data, type, full, meta) {
+                        return meta.row + 1;
+                        //return meta.row + meta.settings._iDisplayStart + 1;
+                        //return count++;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, full) {
+                        $(".question_dtb_" + data.id).html(data.question);
+
+                        var orderList = '<pre><code class="question_dtb_' + data.id + ' javascript"></code></pre>';
+                        return orderList;
+                    }
+                },
+                {
+                    data: null,
+                    render: function (data, type, full) {
+                        var orderList = `<ol type="a">
+                                        <li>)  `+ JSON.parse(data.options).a + `</li>
+                                        <li>)  `+ JSON.parse(data.options).b + `</li>
+                                        <li>)  `+ JSON.parse(data.options).c + `</li>
+                                        <li>)  `+ JSON.parse(data.options).d + `</li>
+                                    </ol>`;
+                        return orderList;
+                    }
+                },
+                { data: 'answer' },
+                { data: 'createdAt' },
+                {
+                    data: null,
+                    render: function (data, type, full) {
+                        //console.log(data);
+                        return `
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-danger dropdown-toggle action-progress"
+                                    data-bs-toggle="dropdown" aria-expanded="false"
+                                    progress-id-text="#delete-update-progress-text" progress-id="#delete-update-progress">
+
+                                <span class="btn-loading hide" id="delete-update-progress">
+                                    <span class="spinner-border spinner-border-sm" role="status"
+                                          aria-hidden="true"></span>
+                                Working...</span> <span class="btn-loading-text" id="delete-update-progress-text">Action</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item update-question" id="`+ data.id + `"
+                                q="`+ data.question + `" o1="` + JSON.parse(data.options).a + `" o2="` + JSON.parse(data.options).b + `"
+                                 o3="`+ JSON.parse(data.options).c + `" o4="` + JSON.parse(data.options).d + `"
+                                  a="`+ data.answer + `" href="#" c-id="` + data.coursesId + `">Update question</a></li>
+                                <li><a class="dropdown-item delete-questions" id="`+ data.id + `" href="#">Delete question</a></li>
+                                </li>
+                            </ul>
+                        </div>
+
+                `;
+                    }
+                }
+            ]
+        });
+
+
+        $(document).on("click", "#myTable tr td .delete-questions", function () {
+            buttonProgress("#myTable tr td .action-progress", true);
+            var url = $(".delete-action-question").attr("delete-action");
+            var settings = {
+                "url": url + $(this).attr("id"),
+                "method": "POST",
+                contentType: "application/json; charset=utf-8",
+            };
+            $.ajax(settings).done(function (response) {
+                buttonProgress("#myTable tr td .action-progress", false);
+                datatablePage = table.page.info().page;
+                table.ajax.reload();
+                setTimeout(load, 1500)
+                alert(response);
+
+            });
+        });
+
+        $(".confirm-update-question").click(function () {
+            var serialize = $(".confirm-update-question-form").serializeArray();
+            var id = $("#q-id").val();
+            var data = {};
+
+            $.each(serialize, function (i, field) {
+                data[field.name] = field.value;
+            });
+            data["examTime"] = $(".examTimeM").val();
+            data["numberOfQuestionPerStudent"] = $(".numberOfQuestionPerStudent").val();
+
+            var url = $(".update-action-question").attr("update-action");
+            var settings = {
+                "url": url + "/" + id,
+                "method": "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+            };
+
+            $.ajax(settings).done(function (response) {
+                datatablePage = table.page.info().page;
+                table.ajax.reload();
+                // setTimeout(load, 1500)
+                alert(response);
+                $("#updateQuestion").modal("hide");
+
+            });
+        })
+
+        $(".empty-exercise").click(function () {
+            buttonProgress('.empty-exercise', true)
+            var url = $(this).attr("empty-exercise-action");
+            var settings = {
+                "url": url,
+                "method": "POST",
+                contentType: "application/json; charset=utf-8",
+            };
+
+            $.ajax(settings).done(function (response) {
+                datatablePage = table.page.info().page;
+                table.ajax.reload();
+                setTimeout(load, 1500)
+                alert(response);
+                buttonProgress('.empty-exercise', false)
+            });
+        })
+
+        $(".reload-exercise").click(function () {
+            buttonProgress('.reload-exercise', false)
+            datatablePage = table.page.info().page;
+            table.ajax.reload();
+            setTimeout(load, 1500)
+
+        })
+        function load() {
+            console.log(datatablePage)
+            table.page(datatablePage).draw('page');
+        }
+        $(".modal-hide").click(function () {
+            buttonProgress('#myTable tr td .action-progress', false)
+        })
+        $(document).on("click", "#myTable tr td .update-question", function () {
+
+            buttonProgress("#myTable tr td .action-progress", true);
+            $("#updateQuestion").modal("show");
+            var i = 1;
+            var q = $(this).attr("q");
+            var id = $(this).attr("id");
+            var o1 = $(this).attr("o1");
+            var o2 = $(this).attr("o2");
+            var o3 = $(this).attr("o3");
+            var o4 = $(this).attr("o4");
+            var a = $(this).attr("a");
+            var courseId = $(this).attr("c-id");
+
+            var qna = `<div class="mb-3">
+
+                            <div class="input-group mb-3">
+                                  <span class="input-group-text" id="basic-addon1">Q`+ i + `</span>
+                                  <input type="text" class="form-control" name="question" placeholder="Your question" value="`+ q + `" aria-label="Username" aria-describedby="basic-addon1">
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item new-li">
+                                    <div class="input-group mb-3 option-list">
+                                          <span class="input-group-text" id="basic-addon1">a) </span>
+                                          <input type="text" class="form-control" name="option1" placeholder="Your question" value="`+ o1 + `" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                </li>
+                                <li class="list-group-item new-li ">
+                                    <div class="input-group mb-3 option-list">
+                                          <span class="input-group-text" id="basic-addon1">b) </span>
+                                          <input type="text" class="form-control" name="option2" placeholder="Your question" value="`+ o2 + `" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                </li>
+                                <li class="list-group-item new-li">
+                                    <div class="input-group mb-3 option-list">
+                                          <span class="input-group-text" id="basic-addon1">c) </span>
+                                          <input type="text" class="form-control" name="option3" placeholder="Your question" value="`+ o3 + `" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                </li>
+                                <li class="list-group-item new-li">
+                                    <div class="input-group mb-3 option-list">
+                                          <span class="input-group-text" id="basic-addon1">d) </span>
+                                          <input type="text" class="form-control" name="option4" placeholder="Your question" value="`+ o4 + `" aria-label="Username" aria-describedby="basic-addon1">
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <p class="answer">Correct Answer: `+ a + `
+                            <input type="hidden" name="answer" value="` + a + `" />
+                            <input type="hidden" name="c-id" value="` + courseId + `" />
+                            <input type="hidden" id="q-id" value="` + id + `" />
+                                                        <h3>OR select another answer: <select name="choose-answer">
+                                                            <option>Choose another answer </option>
+                                                            <option value="a">A</option>
+                                                            <option value="b">B</option>
+                                                            <option value="c">C</option>
+                                                            <option value="d">D</option>
+                                                        </select></h3></p>
+
+                        </div>`;
+
+            $(".update-qna").html(qna);
+        });
+
+        var addSerialNumber = function () {
+            $('.table-body-sn tr').each(function (index) {
+                $(this).find('td:nth-child(1)').html(index + 1);
+            });
+        };
+
+        addSerialNumber();
+
+        function buttonProgressLoop(btn, bool) {
+            console.log($(btn).attr("progress-id"));
+            if (bool) {
+                $($(btn).attr("progress-id")).show();
+                $($(btn).attr("progress-id-text")).hide();
+            } else {
+                $($(btn).attr("progress-id")).hide();
+                $($(btn).attr("progress-id-text")).show();
+            }
+        }
+
+        function buttonProgress(btn, bool) {
+            if (bool) {
+                console.log($(btn).attr("progress-id"))
+                $($(btn).attr("progress-id")).show();
+                $($(btn).attr("progress-id-text")).hide();
+            } else {
+                $($(btn).attr("progress-id")).hide();
+                $($(btn).attr("progress-id-text")).show();
+            }
+        }
+
+        $(".upload-excel").click(function () {
+            $("#excel-file").trigger('click');
+        });
+        $(".select-exercise-type").change(function () {
+            var exerciseType = $(this).val();
+            if (exerciseType === "New exercise") {
+                $(".new-exe").show();
+                $(".old-exe").hide();
+                $('.select-exe').prop('selectedIndex', 0);
+            } else {
+                $(".select-new").val("");
+                $(".new-exe").hide();
+                $(".old-exe").show();
+            }
+        });
+        $(".select-exercise-type-normal-form").change(function () {
+            var exerciseType = $(this).val();
+            if (exerciseType === "New exercise") {
+                $(".new-exe-normal-form").show();
+                $(".old-exe-normal-form").hide();
+                $('.select-exe-normal-form').prop('selectedIndex', 0);
+            } else {
+                $(".select-new-normal-form").val("");
+                $(".new-exe-normal-form").hide();
+                $(".old-exe-normal-form").show();
+            }
+        });
+        $(".confirm-question").click(function () {
+            buttonProgress(".confirm-question", true);
+            var select_exe = $(".select-exe option:selected").val();
+            var select_new = $(".select-new").val();
+            var exercise = "";
+            if (select_exe === "Select Existing exercise") {
+                exercise = select_new;
+            } else {
+                exercise = select_exe;
+            }
+            if (exercise === "") {
+                alert("Please select or enter a exercise")
+                return false;
+            }
+
+            var url = $(".confirm-save-question").attr("action");
+            var settings = {
+                "url": url + "/" + exercise + "/" + $(".courseIdModel option:selected").val(),
+                "method": "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                "mimeType": "multipart/form-data",
+                "data": JSON.stringify({
+                    data: $("#preview_questions").val(),
+                    examTime: $(".examTimeM").val(), numberOfQuestionPerStudent: $(".numberOfQuestionPerStudentM").val()
+                }),
+            };
+
+            $.ajax(settings).done(function (data) {
+                console.log(data);
+                //var data = JSON.parse(response);
+                buttonProgress(".confirm-question", false);
+                if (data.success) {
+
+                    alert(data.message);
+                } else {
+                    alert(data.message);
+                }
+                location.reload();
+            });
+        })
+        $("#excel-file").change(function () {
+            $(".btn-loading").show();
+            $(".btn-loading-text").hide();
+            var url = $(this).attr('action');
+            var form = new FormData();
+            console.log($(this)[0].files);
+            form.append("file", $(this)[0].files[0]);
+
+            var settings = {
+                "url": url + "/" + $(".courseId option:selected").val(),
+                "method": "POST",
+                "processData": false,
+                "mimeType": "multipart/form-data",
+                "contentType": false,
+                "data": form
+            };
+
+            $.ajax(settings).done(function (response) {
+                $("#preview_questions").val(response);
+                var data = JSON.parse(response);
+                $.each(data, function (i, dataEntry) {     // or response['data']
+                    console.log(dataEntry);
+                    qna((i + 1), dataEntry);
+                });
+            });
+        });
+
+
+
+        function qna(i, data) {
+            $('#exampleModal').modal('show')
+            var qna = `<div class="mb-3">
+
+                            <pre><code class="language-html">Q`+ i + `) ` + data.question + `</code></pre>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option1" checked="">
+                                    <label class="form-check-label c-p" for="option1">a) `+ data.option1 + `</label>
+                                </li>
+                                <li class="list-group-item">
+                                    <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option2">
+                                    <label class="form-check-label c-p" for="option2">b) `+ data.option2 + `</label>
+                                </li>
+                                <li class="list-group-item ">
+                                    <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option3">
+                                    <label class="form-check-label c-p" for="option3">c) `+ data.option3 + `</label>
+                                </li>
+                                <li class="list-group-item">
+                                    <input class="form-check-input option me-1 c-p" type="radio" name="Options" value="" id="option4">
+                                    <label class="form-check-label c-p" for="option4">d) `+ data.option4 + `</label>
+                                </li>
+                            </ul>
+
+                            <p class="answer">Answer: `+ data.answer + `</p>
+
+                        </div>`;
+
+            $(".qna").append(qna);
+
+            $(".btn-loading").hide();
+            $(".btn-loading-text").show();
+        }
+        });
+
+        let count = 0;
+
+
+        $(".save-questions").click(function () {
+            //console.log($(".create-exercise").serializeArray());
+            var select_exe = $(".select-exe-normal-form option:selected").val();
+
+            var select_new = $(".select-new-normal-form").val();
+            var exercise = "";
+            if (select_exe === "Select Existing exercise") {
+                exercise = select_new;
+            } else {
+                exercise = select_exe;
+            }
+            if (exercise === "") {
+                alert("Please select or write a new exercise!", "Error");
+                return;
+            }
+            var res = "";
+            var res2 = "";
+            $.each($(".create-exercise").serializeArray(), function (i, field) {
+                //console.log( field.value +"  "+ count)
+                res += field.name + ":" + field.value + "::::";
+                res2 += field.value + ",";
+                console.log(res2)
+            });
+
+            $.ajax({
+                url: $(".create-exercise").attr('action'),
+                method: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    res: res2,
+                    courseId: $(".courseId option:selected").val(), exercise: exercise,
+                    examTime: $(".exam-time").val(), numberOfQuestionPerStudent: $(".numberOfQuestionPerStudent").val()
+                }),
+                success: function (result) {
+                    alert(result);
+                    location.reload();
+
+                },
+            });
+        })
+
+        $(".nn").click(function () {
+            makeQuestionList(++count);
+        })
+        makeQuestionList(count);
+        function makeQuestionList(n) {
+            n++;
+            var data = `<div class="mb-3">
+            <label for="question" class="form-label">Question</label>
+            <input type="text" class="form-control" name="question`+ n + `" id="question" placeholder="Enter question">
+        </div>`;
+
+
+            for (var i = 1; i <= 4; i++) {
+                data += `<div class="col-sm-6">
+                <div class="mb-3">
+                    <label for="Option`+ i + `" class="form-label" >` + abc(i) + `</label>
+                    <input type="text" name="option`+ i + `^` + n + `" class="form-control" id="Option` + i + `" placeholder="Option ` + i + `">
+                </div>
+            </div>`;
+            }
+
+            data += `<div class="col-sm-6"></div>
+
+        <div class="col-sm-6">
+            <div class="mb-3">
+                <label for="answer" class="form-label" >Answer</label>
+                <select id="answer" class="form-control" name="answer`+ n + `">
+                    <option value="a" >A</option>
+                    <option value="b" >B</option>
+                    <option value="c" >C</option>
+                    <option value="d" >D</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="mb-3"><hr></div>`;
+            $(".next").append(data);
+            return n;
+        }
+
+        function abc(n) {
+            switch (n) {
+                case 1:
+                    return "A";
+                    break;
+                case 2:
+                    return "B";
+                    break;
+                case 3:
+                    return "C";
+                    break;
+                case 4:
+                    return "D";
+                    break;
+            }
+        }
+        $(".submit-data").click(function () {
+
+            ajax($(".create-lesson").attr('action'), "POST", JSON.stringify({
+                courseId: $(".courseId option:selected").val(), lessonsName: $("#lessonsNameId").val(), id: $("#lessonId").val()
+                , content: tinymce.get("lessonContent").getContent()
+            }));
+
+        })
+
+        function ajax(url, method, data) {
+            $.ajax({
+                url: url,
+                dataType: "json",
+                method: method,
+                contentType: "application/json; charset=utf-8",
+                data: data,
+                success: function (result) {
+                    if (result.success) {
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                },
+            });
+        }
+
+
+
+        $(".updateExerciseData").click(function () {
+            var id = $(".id").val();
+            var time = $(".time").val();
+            var numberOfQuestionPerStudentUpdate = $(".numberOfQuestionPerStudentUpdate").val();
+            var exerciseName = $(".exerciseName").val();
+            var minimumMarks = $(".minimumMarks").val();
+            var eachQuestionContains = $(".eachQuestionContains").val();
+            var isNegative = false;
+            if ($(".isNegative").is(':checked')) {
+                isNegative = true;
+            } else {
+                isNegative = false;
+            }
+
+            ajax($(this).attr('action'), "POST",
+                JSON.stringify({
+                    id: id,
+                    time: time,
+                    numberOfQuestionPerStudentUpdate: numberOfQuestionPerStudentUpdate,
+                    exerciseName: exerciseName,
+                    minimumMarks: minimumMarks,
+                    eachQuestionContains: eachQuestionContains,
+                    isNegative: isNegative
+
+                })
+            );
+
+        })
+        $(".updateExercise").click(function () {
+            $(".id").val($(this).attr("id"));
+            $(".time").val($(this).attr("time"));
+            $(".numberOfQuestionPerStudentUpdate").val($(this).attr("numberOfQuestionPerStudent"));
+            $(".exerciseName").val($(this).attr("exerciseName"));
+            var minimumMarks = $(this).attr("minimumMarks");
+            var isNegative = $(this).attr("isNegative");
+            var eachQuestionContains = $(this).attr("eachQuestionContains");
+            if (isNegative == 'false') {
+                $(".isNegative").prop("checked", false);
+            } else {
+                $(".isNegative").prop("checked", true);
+            }
+            $(".minimumMarks").val(minimumMarks);
+            $(".eachQuestionContains").val(eachQuestionContains);
+
+            $("#updateExercise").modal("show");
+        })
+
+        function reportLayout() {
+            $(".pre-loader").show();
+            var settings = {
+                "url": $(".report-layout").attr("url") + "/" + $(".report-layout").attr("courseId"),
+                "method": "POST",
+                "contentType": false
+            };
+
+            $.ajax(settings).done(function (response) {
+                $(".pre-loader").hide();
+
+                $(".report-layout").append(response);
+            }).fail(function () {
+                $(".pre-loader").hide();
+            });
+        }
+    </script>
+    <script th:src="@{/js/script.js}"></script>
+    <!--var sel = document.getElementById('answer');-->
+    <!--var fragment = document.createDocumentFragment();-->
+    <!--optionList.forEach(function(cuisine, index) {-->
+    <!--var opt = document.createElement('option');-->
+    <!--opt.innerHTML = cuisine;-->
+    <!--opt.value = cuisine;-->
+    <!--fragment.appendChild(opt);-->
+    <!--});-->
+    <!--sel.appendChild(fragment);-->
+    <!--$.post('json',$(".create-lesson").attr('action'),-->
+    <!--{courseId:$(".courseId option:selected").val(), lessonsName:$("#lessonsNameId").val()-->
+    <!--,content:tinymce.get("lessonContent").getContent()}, 'application/json' , function(response){-->
+    <!--alert("success");-->
+
+    <!--});-->
+</body>
+
+</html>

@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<body>
+
+    <section>
+
+        <div class="lesson-content-body" th:if="${isContent==true}">
+            <div class="modal-header" style="margin-top: 24px; margin-top: 24px;
+                                        border-bottom: 2px solid #e2e2e2;
+                                        margin-bottom: 40px;">
+                <ul class="list-inline">
+                    <li class="list-inline-item " onclick="history.back()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-arrow-left c-p" aria-hidden="true"
+                            style="margin-top: -15px; width: 40px ; height: 40px;">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </li>
+                    <li class="list-inline-item content-title" style="font-size: 35px;">
+                        <h1 th:utext="${(lesson!=null)? lesson.lessonsName:''}">Courses</h1>
+                    </li>
+                </ul>
+
+                <div th:if="${isPaginationEnabled}">
+                    <a class="btn bnt-success btn-sm c-btn" th:if="${nextId!=0}" th:href="@{${nextId}}">Next --></a>
+                    <a class="btn bnt-success btn-sm c-btn finish-btn" th:if="${nextId==0}" type="button">Finish</a>
+                </div>
+
+            </div>
+
+            <div class="lesson-content" th:utext="${(lesson!=null)? lesson.lessonContent:''}"></div>
+        </div>
+        <div class="lesson-content-full" th:if="${isContent==false}">
+
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+
+                <div class="search-by-course w-100" th:if="${getLastFiveLessonList==null}">
+                    <div th:utext="${utils.backHeading(course.course_name)}"></div>
+
+                    <div style="float: left;" sec:authorize="hasRole('ROLE_STUDENT')">
+                        <p th:text="@{''+${completeProgress}+'% compelete'}">66% compelete</p>
+                    </div>
+                    <div class="progress" sec:authorize="hasRole('ROLE_STUDENT')" style="
+                                                width: 50%;
+                                                float: right;
+                                            ">
+                        <div class="progress-bar bg-success" role="progressbar" aria-label="Success example"
+                            th:style="@{'width: '+${completeProgress}+'%'}" th:aria-valuenow="${completeProgress}"
+                            aria-valuemin="0" th:aria-valuemax="${totalProgress}"
+                            th:text="@{''+${completeProgress}+'% compelete'}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-by-course" th:if="${getLastFiveLessonList!=null}">
+                    <div th:utext="${utils.backHeading('Lesson')}"></div>
+                </div>
+                <div class="btn-toolbar mb-2 mb-md-0" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')" th:if="${isCourse!=true}">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary toogle"
+                            to-id=".create-lesson">Create
+                            Lesson
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <form th:if="${edit!=null}" class="row justify-content-end create-lesson" th:action="@{/lesson/create}"
+                th:object="${lesson}" method="POST" enctype="utf8" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+
+                <input type="hidden" id="lessonId" name="id" th:value="${edit}" />
+                <div class="mb-3">
+                    <label for="courseId" class="form-label">Select course</label>
+                    <select id="courseId" class="form-control courseId" name="course_id"
+                        th:disabled="${editLesson.course.id>0}">
+                        <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.course_name}"
+                            th:selected="${course.id==editLesson.course.id}">
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="lessonsNameId" class="form-label">Lesson name</label>
+                    <input type="text" class="form-control" id="lessonsNameId" name="lessonsName"
+                        placeholder="Lesson name" th:value="${editLesson.lessonsName}">
+                </div>
+                <div class="mb-3">
+                    <label for="lessonContent" class="form-label">Example textarea</label>
+
+                    <textarea class="form-control" name="lessonContent" id="lessonContent" rows="3"
+                        th:text="${editLesson.lessonContent}"></textarea>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary mb-3 submit-data">Update lesson</button>
+                </div>
+            </form>
+            <form th:if="${edit==null}" class="row justify-content-end create-lesson"
+                th:style="${isCreateLesson}? '':'display: none'" th:action="@{/lesson/create}" th:object="${lesson}"
+                method="POST" enctype="utf8" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                <input type="hidden" id="lessonId" name="id" th:value="0" />
+                <div class="mb-3">
+                    <label for="courseId" class="form-label">Select course</label>
+                    <select id="courseId" class="form-control courseId" name="course_id" th:disabled="${courseId>0}">
+                        <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.course_name}"
+                            th:selected="${course.id==courseId}">
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="lessonsNameId" class="form-label">Lesson name</label>
+                    <input type="text" class="form-control" id="lessonsNameId" name="lessonsName"
+                        placeholder="Lesson name">
+                </div>
+                <div class="mb-3">
+                    <label for="lessonContent" class="form-label">Example textarea</label>
+
+                    <textarea class="form-control" name="lessonContent" id="lessonContent" rows="3"></textarea>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary mb-3 submit-data">Create lesson</button>
+                </div>
+            </form>
+
+
+            <div class="table-responsive">
+                <div class="search-by-course" th:if="${getLastFiveLessonList==null && isCourse==true}">
+
+                    <table class="table data-table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Topic</th>
+                                <th scope="col" sec:authorize="hasRole('ROLE_STUDENT')">Read</th>
+                                <th scope="col">Created At</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body-sn">
+                            <div th:if="${lessonList.size()==0}">
+                                <tr>
+                                    <td colspan="5">No data found</td>
+                                </tr>
+                            </div>
+
+                            <th:block th:each="data : ${lessonList}">
+                                <tr>
+                                    <td>1</td>
+                                    <td><a th:href="@{${courseId}+'/'+${utils.uri(data.lessonsName,false)}+'/view-content-details/true/'+ ${data.id}}"
+                                            class="view-content-detail" th:url="@{'/student/progress-update'}"
+                                            th:course-id="${data.course.id}" th:data="@{'lesson_'+${data.id}}"
+                                            th:type="lesson" th:text="${data.lessonsName}"
+                                            th:content="${data.lessonContent}"
+                                            th:content-title="${data.lessonsName}"></a></td>
+                                    <td><a th:text="${data.course.course_topic}"></a></td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${lessonId.contains(data.id)==false}">
+                                        <div class="unread-dot"></div>
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')" th:if="${lessonId.contains(data.id)}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28px"
+                                            height="28px">
+                                            <path fill="#c8e6c9"
+                                                d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z" />
+                                            <path fill="#4caf50"
+                                                d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z" />
+                                        </svg>
+                                    </td>
+                                    <td th:text="${data.createdAt}"></td>
+                                    <td>
+                                        <!-- Example single danger button -->
+                                        <div class="btn-group" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                                            <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item"
+                                                        th:href="@{'/lesson?edit='+${data.id}}">Edit
+                                                        lesson</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </th:block>
+
+
+                        </tbody>
+                    </table>
+
+
+                    <h1 class="h1">Exercise</h1>
+                    <div th:if="${exerciseQuestion.size()==0}">
+                        <center style="font-size: xx-large;margin-top: 52px;padding-bottom: 75px;color: #ff0000e6;">
+                            No any exercise found!
+
+                        </center>
+                    </div>
+                    <table th:if="${exerciseQuestion.size()!=0}" class="data-table table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Exercise Name</th>
+                                <th scope="col" sec:authorize="hasRole('ROLE_STUDENT')">Read</th>
+                                <th scope="col" sec:authorize="hasRole('ROLE_STUDENT')">Exam Report</th>
+                                <th scope="col" sec:authorize="hasRole('ROLE_STUDENT')">Report Date</th>
+                                <th scope="col" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">Created At</th>
+                                <th scope="col" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-body-sn">
+                            <div th:if="${exerciseQuestion.size()==0}">
+                                <tr>
+                                    <td colspan="5">No data found</td>
+                                </tr>
+                            </div>
+
+                            <th:block th:each="data : ${exerciseQuestion}">
+                                <tr>
+                                    <td>1</td>
+                                    <td sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')"><a
+                                            th:href="@{'/questions/'+${encodeDecode.encode(data.id)}+'/'+${encodeDecode.encode(data.exerciseName)}+'/'+ ${courseId}}"
+                                            th:text="${data.exerciseName}"></a></td>
+
+                                    <td th:if="${exerciseId.contains(data.id)==false}"
+                                        sec:authorize="hasRole('ROLE_STUDENT')"><a
+                                            th:href="@{'/questions/test/'+${encodeDecode.encode(data.id)}+'/'+${encodeDecode.encode(data.exerciseName)}+'/'+ ${courseId}}"
+                                            th:text="${data.exerciseName}"></a></td>
+                                    <td th:if="${exerciseId.contains(data.id)}" sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:text="${data.exerciseName}"></td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${exerciseId.contains(data.id)==false}">
+                                        <div class="unread-dot"></div>
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')" th:if="${exerciseId.contains(data.id)}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28px"
+                                            height="28px">
+                                            <path fill="#c8e6c9"
+                                                d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z" />
+                                            <path fill="#4caf50"
+                                                d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z" />
+                                        </svg>
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${exerciseExamReport.containsKey(data.id)}"><a
+                                            th:href="@{'/exam/response/'+${exerciseExamReport.get(data.id).id}}"
+                                            target="_blank">Goto report</a>
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${exerciseExamReport.containsKey(data.id)==false}"><a></a>
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${exerciseExamReport.containsKey(data.id)}"
+                                        th:text="${exerciseExamReport.get(data.id).createdAt}">
+                                    </td>
+                                    <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                        th:if="${exerciseExamReport.containsKey(data.id)==false}"><a></a>
+                                    </td>
+
+                                    <td th:text="${data.createdAt}" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')"></td>
+                                    <td sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                                        <!-- Example single danger button -->
+                                        <div class="btn-group" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                                            <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                                Action
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item"
+                                                        th:href="@{'/exercise/delete/'+${encodeDecode.encode(data.id)}}">Delete
+                                                        exercise</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </th:block>
+
+
+                        </tbody>
+                    </table>
+                </div>
+                <form method="get" th:accept="@{/lesson/search}">
+                    <input type="search" class="form-control float-end" style="width: 280px;" name="search"
+                        th:value="${search}" placeholder="Search lesson name" />
+                </form>
+                <table class="table table-striped" th:if="${isSearch}">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body-sn">
+                        <div th:if="${searchList.size()==0}">
+                            <tr>
+                                <td colspan="5">No data found</td>
+                            </tr>
+                        </div>
+
+                        <th:block th:each="data : ${searchList}">
+                            <tr>
+                                <td>1</td>
+                                <td><a th:href="@{'/course/'+${utils.uri(data.course.course_name,false)}+'/'+${data.course.id}+'/'+${utils.uri(data.lessonsName,false)}+'/view-content-details/false/'+ ${data.id}}"
+                                        class="view-content-detail" th:text="${data.lessonsName}"
+                                        th:content="${data.lessonContent}" th:content-title="${data.lessonsName}"></a>
+                                </td>
+                                <td><a th:href="@{'/course/create/lesson/'+${data.course.id}}"
+                                        th:text="${data.course.course_name}"></a></td>
+                                <td th:text="${data.createdAt}"></td>
+                                <td>
+                                    <!-- Example single danger button -->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <ul class="dropdown-menu" style="display: none;">
+                                            <li><a class="dropdown-item" href="#">Create lesson</a></li>
+                                            <li><a class="dropdown-item" href="#">Create Exercise</a></li>
+                                            <li><a class="dropdown-item"
+                                                    th:href="@{'/course/delete/'+${data.id}}">Delete lesson</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+
+
+                    </tbody>
+                </table>
+                <h4 th:if="${getLastFiveLessonList!=null}" class="float-start" style="padding-bottom: 24px;">Recent 5
+                    record</h4>
+
+                <table class="table table-striped" th:if="${getLastFiveLessonList!=null}">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Course</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body-sn">
+                        <div th:if="${getLastFiveLessonList.size()==0}">
+                            <tr>
+                                <td colspan="5">No data found</td>
+                            </tr>
+                        </div>
+
+                        <th:block th:each="data : ${getLastFiveLessonList}">
+                            <tr>
+                                <td>1</td>
+                                <td><a th:href="@{'/course/'+${utils.uri(data.course.course_name,false)}+'/'+${data.course.id}+'/'+${utils.uri(data.lessonsName,false)}+'/view-content-details/false/'+${data.id}}"
+                                        class="view-content-detail" th:text="${data.lessonsName}"
+                                        th:content="${data.lessonContent}" th:content-title="${data.lessonsName}"></a>
+                                </td>
+                                <td><a th:href="@{'/course/create/lesson/'+${data.course.id}}"
+                                        th:text="${data.course.course_name}"></a></td>
+                                <td th:text="${data.createdAt}"></td>
+                                <td>
+                                    <!-- Example single danger button -->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <ul class="dropdown-menu" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                                            <li><a class="dropdown-item"
+                                                    th:href="@{'/lesson/delete/'+${data.id}}">Delete lesson</a>
+                                            </li>
+                                            <li><a class="dropdown-item" th:href="@{'/lesson?edit='+${data.id}}">Edit
+                                                    lesson</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="modal fade" id="exampleModalFullscreen" tabindex="-1"
+                aria-labelledby="exampleModalFullscreenLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-4 content-title" id="exampleModalFullscreenLabel">Introduction
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body ">
+                            <div class="lesson-content"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script>
+                tinymce.init({
+                    selector: 'textarea',
+                    plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+                    toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+                });
+
+
+
+
+
+
+
+
+
+
+
+
+            </script>
+        </div>
+    </section>
+
+</body>
+
+</html>

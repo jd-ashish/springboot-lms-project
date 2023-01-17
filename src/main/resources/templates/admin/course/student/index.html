@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/base::layout(~{::section})"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+<section>
+
+
+    <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div th:utext="${utils.backHeading('All Courses')}"></div>
+
+
+    </div>
+
+    <div class="table-responsive" style="height: 99vh;">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Topic</th>
+                <th scope="col">Author</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody class="table-body-sn">
+            <div th:if="${courseList.size()==0}">
+                <tr>
+                    <td colspan="5">No data found</td>
+                </tr>
+            </div>
+
+            <th:block th:each="course : ${courseList}">
+                <tr>
+                    <td>1</td>
+
+                    <div th:if="${course.is_enrollment!='null'}" >
+                        <td th:if="${course.is_enrollment=='false'}"><a href="#" th:class="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'Enroll_successfully':'Waiting_for_confirmation':'Enroll_course'}"
+                               th:text="${course.course_name}"></a></td>
+                    </div>
+                    <div th:if="${course.is_enrollment=='null'}" >
+                        <td><a href="#" th:class="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'Enroll_successfully':'Waiting_for_confirmation':'Enroll_course'}"
+                               th:text="${course.course_name}"></a></td>
+                    </div>
+
+                    <div th:if="${course.is_enrollment!='null'}" >
+                        <td th:if="${course.is_enrollment=='true'}"><a th:href="@{'/course/'+${utils.uri(course.course_name,false)}+'/'+${course.course_id }}"
+                               th:text="${course.course_name}"
+                               th:class="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'Enroll_successfully':'Waiting_for_confirmation':'Enroll_course'}"></a></td> 
+                    </div>
+                    <td th:text="${course.course_topic}">topic</td>
+                    <td th:text="${course.user.name}">Ashish</td>
+                    <td>
+                        <button
+                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem;--bs-btn-font-size: aliceblue;"
+                                th:class="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'btn bnt-sm btn-success':'btn bnt-sm btn-danger':'btn bnt-sm in-role-course'}"
+                                sec:authorize="hasRole('ROLE_STUDENT')"
+                                th:in-roll-action="@{/student/in-role-course}"
+                                th:course-id="@{${course.course_id }}"
+                                th:uEmail="@{${course.user.email}}"
+                                th:progress-id-text="@{'#confirm-progress-text'+${course.course_id }}"
+                                th:progress-id="@{'#confirm-progress'+${course.course_id }}">
+								    <span class="btn-loading hide" th:id="@{'confirm-progress'+${course.course_id }}">
+                            <span class="spinner-border spinner-border-sm" role="status"
+                                  aria-hidden="true"></span>
+                        in rolling...</span> <span class="btn-loading-text"
+                                                   th:id="@{'confirm-progress-text'+${course.course_id }}"
+                                                   th:text="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'Enroll successfully':'Waiting for confirmation':'Enroll course'}"></span>
+
+                        </button>
+
+
+                    </td>
+                </tr>
+            </th:block>
+
+
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+</body>
+
+</html>

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="normal/base::layout(~{::section})">
+<head>
+
+</head>
+<body>
+
+<section>
+  <table class="table">
+
+    <tr>
+      <th scope="row">#ID</th>
+      <th scope="col" th:text="${user.id}"></th>
+    </tr>
+    <tr>
+      <th scope="row">Name</th>
+      <td th:text="${user.name}"></td>
+    </tr>
+    <tr>
+      <th scope="row">Email</th>
+      <td th:text="${user.email}"></td>
+    </tr>
+
+  </table>
+
+</section>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-sources>
+      <data-source id="c3dfca0b-31de-4d4e-8963-e42ef3709245" name="smartcontactmanager" url="jdbc:mysql://localhost/smartcontactmanager?useSSL=false&amp;allowMultiQueries=true&amp;serverTimezone=UTC" driverClass="com.mysql.jdbc.Driver" />
+    </data-sources>
+  </component>
+</project>

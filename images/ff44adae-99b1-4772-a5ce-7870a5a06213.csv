@@ -1,0 +1,80 @@
+question,a,b,c,d,answer
+Who invented Java Programming?,Guido van Rossum,James Gosling,Dennis Ritchie,Bjarne Stroustrup,b
+Which statement is true about Java?,Java is a sequence-dependent programming language,Java is a code dependent programming language,Java is a platform-dependent programming language,Java is a platform-independent programming language,d
+"Which component is used to compile, debug and execute the java programs?",JRE,JIT,JDK,JVM,c
+Which one of the following is not a Java feature?,Object-oriented,Use of pointers,Portable,Dynamic and Extensible,b
+Which of these cannot be used for a variable name in Java?,identifier & keyword,identifier,keyword,none of the mentioned,c
+What is the extension of java code files?,.js,.txt,.class,.java,d
+"7. What will be the output of the following Java code?
+
+    class increment {
+        public static void main(String args[]) 
+        {        
+             int g = 3;
+             System.out.print(++g * 8);
+        } 
+    }",32,33,24,25,a
+Which environment variable is used to set the java path?,MAVEN_Path,JavaPATH,JAVA,JAVA_HOME,d
+"What will be the output of the following Java program?
+
+class output {
+        public static void main(String args[]) 
+        {
+            double a, b,c;
+            a = 3.0/0;
+            b = 0/4.0;
+            c=0/0.0;
+ 
+     System.out.println(a);
+            System.out.println(b);
+            System.out.println(c);
+        } 
+    }",NaN,Infinity,0.0 ,all of the mentioned,d
+Which of the following is not an OOPS concept in Java?,Polymorphism,Inheritance,Compilation,Encapsulation,c
+What is not the use of “this” keyword in Java?,Referring to the instance variable when a local variable has the same name,Passing itself to the method of the same class,Passing itself to another method,Calling another constructor in constructor chaining,b
+"What will be the output of the following Java program?
+
+    class variable_scope 
+    {
+        public static void main(String args[]) 
+        {
+            int x;
+            x = 5;
+            {
+         int y = 6;
+         System.out.print(x + "" "" + y);
+            }
+            System.out.println(x + "" "" + y);
+        } 
+    }",Compilation error,Runtime error,5656,565,a
+"What will be the error in the following Java code?
+
+    byte b = 50;
+    b = b * 50;",b cannot contain value 50,"b cannot contain value 100, limited by its range",No error in this code,"* operator has converted b * 50 into int, which can not be converted to byte",d
+Which of the following is a type of polymorphism in Java Programming?,Multiple polymorphism,Compile time polymorphism,Multilevel polymorphism,Execution time polymorphism,b
+"What will be the output of the following Java program?
+
+    class leftshift_operator 
+    {
+        public static void main(String args[]) 
+        {        
+             byte x = 64;
+             int i;
+             byte y; 
+             i = x << 2;
+             y = (byte) (x << 2);
+             System.out.print(i + "" "" + y);
+        } 
+    }",0 256,0 64,256 0,64 0,c
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,

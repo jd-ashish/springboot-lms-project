@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+    <section th:if="${user.role=='ROLE_ADMIN'}" class="mt-4">
+        <div class="row">
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" th:href="@{'/admin/users'}">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL users</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${teachersCount+studentCount}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Teachers: <span
+                                th:text="${''+teachersCount}"></span> </span>&nbsp;
+                        <span class="badge bg-soft-success text-success sp1 text-body fs-6 ms-1 sp2"><span
+                                th:text="${''+studentCount}"></span> Studnet</span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" th:href="@{'/admin/course'}">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL course</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${courseList.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayCourse}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${courseList.size()-todayCourse}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL LESSON</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${lesson.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayLesson}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${lesson.size()-todayLesson}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+            
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL question</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${question.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayQuestion}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${question.size()-todayQuestion}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+        </div>
+    </section>
+
+
+    <section th:if="${user.role=='ROLE_TEACHER'}" class="mt-4">
+        <div class="row">
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL Enrolled Student</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${enrollCourse.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayEnrollCourse}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${enrollCourse.size()-todayEnrollCourse}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL COURSE</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${course.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayCourse}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${course.size()-todayCourse}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL LESSON</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${lesson.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayLesson}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${lesson.size()-todayLesson}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL EXERCISE</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${exercise.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayExercise}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${exercise.size()-todayExercise}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL question</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${question.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${todayQuestions}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${question.size()-todayQuestions}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+        </div>
+    </section>
+
+
+    <section th:if="${user.role=='ROLE_STUDENT'}">
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group me-2">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                    <span data-feather="calendar" class="align-text-bottom"></span>
+                    This week
+                </button>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-sm-8">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <img th:src="@{/img/user.svg}" style="width: 50%;" />
+                    </div>
+                    <div class="col-sm-6" style="padding-top: 30px;align-self: center;">
+                        <p th:text="${user.name}">Ashish kumar</p>
+                        <p th:text="${user.email}">Ashish kumar</p>
+                        <p th:class="${user.enable ? 'text-success':'text-danger'}"
+                            style="font-weight: bold;font-size: 22px;padding: 0px;"
+                            th:text="${user.enable ? 'Active':'Inactive'}"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4" th:if="${noticeBoardList.size()>0}">
+                <div class="notis-board">
+                    <h4>Latest notice</h4>
+                    <th:block th:each="data : ${noticeBoardList}">
+                        <div class="mt-2 open-win c-p" th:href="${data.href}">
+                            <p th:text="${data.message}"></p>
+                            <div>
+                                <p class="float-end">By: <span th:text="${data.user.name}"></span></p>
+                                <p class="float-start" th:text="${data.date}">60 minutes ago</p>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL Enrolled course</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${totalEnrollmentCourse.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                th:text="${totalEnrollmentCourseToday}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                th:text="${totalEnrollmentCourse.size()-totalEnrollmentCourseToday}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            Maximum marks</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" th:text="${examReportServiceMaxFinalMarks}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                text="${todayCourse}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span text="${course.size()-todayCourse}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL LESSON</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" text="${lesson.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                text="${todayLesson}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span text="${lesson.size()-todayLesson}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL EXERCISE</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" text="${exercise.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                text="${todayExercise}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                text="${exercise.size()-todayExercise}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+            <div class="col-sm-6 col-lg-3 mb-3 mb-lg-5">
+                <!-- Card -->
+                <a class="card card-hover-shadow h-100 dash-card" href="#">
+                    <div class="card-body">
+                        <h6 class="card-subtitle">
+                            TOTAL question</h6>
+                        <div class="row align-items-center row-div gx-2 mb-1">
+                            <div class="col-6">
+                                <h2 class="card-title text-inherit" text="${question.size()}"></h2>
+                            </div>
+                            <div class="col-6">
+
+                            </div>
+                        </div>
+                        <span class="badge bg-soft-success text-success sp1">
+                            <i class="bi-graph-up" style="box-sizing: border-box;"></i>&nbsp;Today: <span
+                                text="${todayQuestions}"></span> </span>&nbsp;
+                        <span class="text-body fs-6 ms-1 sp2"><span
+                                text="${question.size()-todayQuestions}"></span></span>
+                    </div>
+                </a>
+                <!-- End Card -->
+            </div>
+        </div>
+
+
+
+    </section>
+
+</body>
+
+</html>

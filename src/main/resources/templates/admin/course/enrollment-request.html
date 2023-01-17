@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading('Enrollment Request')}"></div>
+
+
+        </div>
+
+        <div class="table-responsive">
+            <div th:if="${courseList.size()==0}">
+                <center class="center">
+                    No any enrollment request found!
+                </center>
+            </div>
+            <table class="table table-striped" th:if="${courseList.size()>0}">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col">Student</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body-sn">
+                    <div th:if="${courseList.size()==0}">
+                        <tr>
+                            <td colspan="5">No data found</td>
+                        </tr>
+                    </div>
+
+                    <th:block th:each="course : ${courseList}">
+                        <tr>
+                            <td>1</td>
+
+                            <td><a th:href="@{'/course/'+${utils.uri(course.course_name,false)}+'/'+${course.course_id }}"
+                                    th:text="${course.course_name}"></a></td>
+                            <td th:text="${course.course_topic}">topic</td>
+                            <td th:text="${course.studentDetails.name}"></td>
+                            <td>
+                                <button
+                                    th:class="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'btn bnt-sm btn-danger cancel-enroll-request':'btn bnt-sm btn-success accept-enroll-request':'btn bnt-sm in-role-course'}"
+                                    th:in-roll-action="@{${(course.is_enrollment!='null')? (course.is_enrollment=='true')? '/student/cancel-enroll-request':'/student/accept-enroll-request':'Enroll-course'}}"
+                                    th:course-id="@{${course.course_id }}" th:uEmail="@{${course.user.email}}"
+                                    th:enrollment-id="@{${course.enroll_course_id }}"
+                                    th:progress-id-text="@{'#confirm-progress-text'+${course.course_id }}"
+                                    th:progress-id="@{'#confirm-progress'+${course.course_id }}"
+                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem;--bs-btn-font-size: aliceblue;">
+                                    <span class="btn-loading hide" th:id="@{'confirm-progress'+${course.course_id }}">
+                                        <span class="spinner-border spinner-border-sm" role="status"
+                                            aria-hidden="true"></span>
+                                        in rolling...</span> <span class="btn-loading-text"
+                                        th:id="@{'confirm-progress-text'+${course.course_id }}"
+                                        th:text="${(course.is_enrollment!='null')? (course.is_enrollment=='true')? 'Cancel enroll request':'Accept enroll request':'Enroll course'}"></span>
+
+                                </button>
+
+
+                            </td>
+                        </tr>
+                    </th:block>
+
+
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</body>
+
+</html>

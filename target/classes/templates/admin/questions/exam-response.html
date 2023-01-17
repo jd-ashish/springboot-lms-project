@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+
+<body>
+
+    <section>
+        <div class="row">
+            <div class="col-sm-12">
+                <center><img th:src="@{/img/winner-cup.png}" alt=""></center>
+            </div>
+
+            <div class="col-sm-12">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td th:text="${user!=null}? ${user.name}:''">Ashish kumar</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Email</th>
+                            <td th:text="${user!=null}? ${user.email}:''">youremail.gamil.com</td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="2" style="text-align: center;">Report card</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total question</th>
+                            <td th:text="${utils.split(examReport.questions,',').length}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Correct Question</th>
+                            <td th:text="${examReport.totalCorrectQuestion}">1 marks</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total In-Correct Question</th>
+                            <td th:text="${examReport.totalIncorrectQuestion}">1 marks</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total solved question</th>
+                            <td th:text="${exam.totalSolvedQuestions}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total Unsolved question</th>
+                            <td th:text="${exam.totalUnsolvedQuestions}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Exam time limit</th>
+                            <td>30 min</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Each question contain</th>
+                            <td th:text="${exam.eachQuestionContains+' Marks'}">1 marks</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Is negative marking</th>
+                            <td th:text="${exam.isNegative}">1 marks</td>
+                        </tr>
+
+
+                        <tr>
+                            <th colspan="2" style="text-align: center">Mark sheet</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Total marks</th>
+                            <td th:text="${utils.split(examReport.questions,',').length*exam.eachQuestionContains}">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Minimum marks</th>
+                            <td th:text="${exam.minimumMarks}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Obtained marks</th>
+                            <td th:text="${examReport.finalMarks}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Result</th>
+                            <td th:text="${(int.parseInt(examReport.finalMarks)<exam.minimumMarks)? 'Fail':'Pass'}">
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+                <div class="my-3 p-3 bg-body rounded shadow-sm" style="border: 2px solid #e2e2e254;">
+                    <div class="c-p review-question-list" modal="0" th:view=".exam-question-review-view" th:action="@{'/exam/question-review/'+${examReportId}}">
+                        <h6 class="pb-2 mb-0 float-start" style="margin-top: 4px !important;">Review Question</h6>
+                        <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" fill-rule="evenodd" class="c-p"
+                            stroke-linejoin="round" stroke-miterlimit="2" viewBox="0 0 24 24"
+                            style="height: 28px;width: 28px; transform: rotate(179deg); float: right;">
+                            <path
+                                d="m9.001 10.978h-3.251c-.412 0-.75-.335-.75-.752 0-.188.071-.375.206-.518 1.685-1.775 4.692-4.945 6.069-6.396.189-.2.452-.312.725-.312.274 0 .536.112.725.312 1.377 1.451 4.385 4.621 6.068 6.396.136.143.207.33.207.518 0 .417-.337.752-.75.752h-3.251v9.02c0 .531-.47 1.002-1 1.002h-3.998c-.53 0-1-.471-1-1.002z"
+                                fill-rule="nonzero" />
+                        </svg>
+                    </div>
+                    <hr style="margin-top: 34px !important;">
+                    <div class="d-flex text-muted pt-3 " style="margin-top: 20px !important;">
+                        <div class="row">
+                            <div class="col-sm-12 exam-question-review-view">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+
+</html>

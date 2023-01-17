@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading('Reports')}"></div>
+
+
+        </div>
+
+        <div class="table-responsive report-layout" th:courseId="${courseId}" th:url="@{'/report/get-layout'}">
+
+        </div>
+
+        <!-- Modal -->
+        
+    </section>
+
+</body>
+
+</html>

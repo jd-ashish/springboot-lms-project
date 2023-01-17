@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading('Lessions ')}"></div>
+            
+        </div>
+
+        <div class="table-responsive">
+
+            <div th:if="${lessons.size()==0}">
+                <center class="center">
+                    No any Enrolled Student found!
+                </center>
+            </div>
+            <table class="table data-table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Topic</th>
+                        <th scope="col" sec:authorize="hasRole('ROLE_STUDENT')">Read</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table-body-sn">
+                    <th:block th:each="data : ${lessons}">
+                        <tr>
+                            <td>1</td>
+                            <td><a th:href="@{'/course/'+${data.course.id}+'/'+${data.course.id}+'/'+${utils.uri(data.lessonsName,false)}+'/view-content-details/true/'+ ${data.id}}"
+                                    class="view-content-detail" th:url="@{'/student/progress-update'}"
+                                    th:course-id="${data.course.id}" th:data="@{'lesson_'+${data.id}}"
+                                    th:type="lesson" th:text="${data.lessonsName}"
+                                    th:content="${data.lessonContent}"
+                                    th:content-title="${data.lessonsName}"></a></td>
+                            <td><a th:text="${data.course.course_topic}"></a></td>
+                            <td sec:authorize="hasRole('ROLE_STUDENT')"
+                                th:if="${lessonId.contains(data.id)==false}">
+                                <div class="unread-dot"></div>
+                            </td>
+                            <td sec:authorize="hasRole('ROLE_STUDENT')" th:if="${lessonId.contains(data.id)}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="28px"
+                                    height="28px">
+                                    <path fill="#c8e6c9"
+                                        d="M44,24c0,11.045-8.955,20-20,20S4,35.045,4,24S12.955,4,24,4S44,12.955,44,24z" />
+                                    <path fill="#4caf50"
+                                        d="M34.586,14.586l-13.57,13.586l-5.602-5.586l-2.828,2.828l8.434,8.414l16.395-16.414L34.586,14.586z" />
+                                </svg>
+                            </td>
+                            <td th:text="${data.createdAt}"></td>
+                            <td>
+                                <!-- Example single danger button -->
+                                <div class="btn-group" sec:authorize="hasAnyRole('ROLE_TEACHER','ROLE_ADMIN')">
+                                    <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item"
+                                                th:href="@{'/lesson?edit='+${data.id}}">Edit
+                                                lesson</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+
+
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</body>
+
+</html>

@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading(utils.ucFirst(encodeDecode.decode(exerciseName)))}"
+                class="courseIdForExam" th:course-id="${courseId}" th:exercise-id="${exerciseId}"
+                th:teacher-id="${questionList.get(0).user.id}" th:testTime="${questionList.get(0).user.id}"></div>
+            <div id="ten-countdown"></div>
+            <div class="btn-toolbar mb-2 mb-md-0" sec:authorize="hasRole('ROLE_TEACHER')">
+                <div class="btn-group me-2">
+                    <a type="button" class="btn btn-sm btn-outline-secondary" target="_blank"
+                        th:href="@{/exercise/download}">Export sample</a>
+                    <input type="file" name="file" id="excel-file" th:action="@{/exercise/export}"
+                        style="display:none;" />
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary upload-excel">
+                        <span class="btn-loading hide">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Importing...</span> <span class="btn-loading-text">Import</span>
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary empty-exercise"
+                        progress-id-text="#empty-exercise-progress-text" progress-id="#empty-exercise-progress"
+                        th:empty-exercise-action="@{'/exercise/empty-exercise/'+ ${exerciseId}}">
+                        <span class="btn-loading hide" id="empty-exercise-progress">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Clearing lesson ...</span> <span class="btn-loading-text"
+                            id="empty-exercise-progress-text">Clear
+                            lesson</span>
+                    </button>
+
+                    <select id="courseId" class="form-control courseId" th:disabled="${courseId>0}"
+                        style="display: none;">
+                        <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.course_name}"
+                            th:selected="${course.id==courseId}">
+                    </select>
+                    <button type="button" class="btn btn-sm btn-outline-secondary reload-exercise"
+                        progress-id-text="#reload-exercise-progress-text" progress-id="#reload-exercise-progress"
+                        th:empty-exercise-action="@{'/exercise/empty-exercise/'+ ${exerciseId}}">
+                        <span class="btn-loading hide" id="reload-exercise-progress">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Reloading...</span> <span class="btn-loading-text" id="reload-exercise-progress-text">Reload
+                            exercise</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+        <div class="examSubmit" th:examSubmit="@{/exam/submit}"></div>
+        <input type="hidden" name="isExamStart" class="isExamStart" />
+        <form class="row justify-content-end hide create-exercise" style="display: none"
+            sec:authorize="hasRole('ROLE_TEACHER')" th:action="@{/exercise/create}" th:object="${course}" method="POST"
+            enctype="utf8">
+
+            <div class="mb-3">
+
+            </div>
+
+
+
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3 nn">More question</button>
+                <button type="button" class="btn btn-primary mb-3 save-questions">Save questions</button>
+            </div>
+        </form>
+
+        <div class="table-responsive main-content" th:action="@{'/exercise/all-questions-list/' + ${exerciseId}}">
+        </div>
+        <!--  question overview solve -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Overview before submit test</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h2 class="fs-5">Total questions: <span class="total-question"> 20</span></h2>
+                        <h2 class="fs-5">Total solved questions: <span class="total-solved-questions"> 10</span></h2>
+                        <h2 class="fs-5">Total un-solved questions: <span class="total-skip-questions"> 10</span></h2>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary submit-exam-paper">Submit my exam</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Update Modal -->
+        <div class="modal fade" id="updateQuestion" tabindex="-1" aria-labelledby="updateQuestionLabel"
+            aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="updateQuestionLabel">Update question</h1>
+                        <button type="button" class="btn-close modal-hide" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="confirm-update-question-form" th:action="@{/exercise/confirm-save-question}">
+
+                            <div class="update-qna update-action-question"
+                                th:update-action="@{'/exercise/confirm-update-question/' + ${exerciseId}}"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary confirm-update-question"
+                            progress-id-text="#confirm-progress-text" progress-id="#confirm-progress">
+                            <span class="btn-loading hide" id="confirm-progress">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...</span> <span class="btn-loading-text" id="confirm-progress-text">Confirm
+                                Update</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="wincount-end" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <p>
+                            You cross the limit <span id="win-count-end"></span>
+                        </p>
+                    </div>
+                    <div class="row" style="padding: 12px;">
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-secondary btn-danger"
+                                onclick="history.back()">Cancel</button>
+                        </div>
+                        <div class="col-sm-8 text-center">
+                            <p id="counter-resume-end" style="
+                                        font-size: xx-large;
+                                        color: #7d0e0e;
+                                        font-family: fantasy;
+                                        letter-spacing: 13px;
+                                    ">59 sec</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="wincount" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <p>
+                            Can not move to another windows <span id="win-count"></span>
+                        </p>
+                    </div>
+                    <div class="row" style="padding: 12px;">
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-secondary btn-danger"
+                                onclick="history.back()">Cancel</button>
+                        </div>
+                        <div class="col-sm-8 text-center">
+                            <p id="counter-resume" style="
+                                        font-size: xx-large;
+                                        color: #7d0e0e;
+                                        font-family: fantasy;
+                                        letter-spacing: 13px;
+                                    ">59 sec</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before start exam show tour -->
+        <div class="modal fade" id="startExamTour" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <p>
+                        <h2>Instructions on how to complete the <br>Multiple Choice Questions during an examination</h2>
+                        <h3>Note: There are variations to the instructions per module exam which are not included in
+                            these general instructions</h3>
+
+                        <ol type="1">
+                            <li>Answers to all questions are to be recorded on the multiple-choice form, either in the
+                                format A-E or True/False.</li>
+                            <li>Mark one box only to indicate the answer you consider correct for each question</li>
+                            <li>Mark your answers in pencil on the multiple-choice form provided. Do not use a biro
+                                anywhere on the form</li>
+                            <li>Do not bend, tear or use a green tag on the multiple-choice form.</li>
+                            <li>Rough calculations may be shown in an examination book.</li>
+                        </ol>
+                        </p>
+
+                        <div style="text-align: -webkit-center;" id="but">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+                                <path fill="#3B97D3"
+                                    d="M32.1 98H18c-3.3 0-6-2.7-6-6V37c0-3.3 2.7-6 6-6h12.8c1.9-1.5 3.9-2.8 6-4H18c-5.5 0-10 4.5-10 10v55c0 5.5 4.5 10 10 10h20.7c-2.3-1.1-4.5-2.5-6.6-4zM109 27H77.2c2.1 1.2 4.1 2.5 6 4H109c3.3 0 6 2.7 6 6v55c0 3.3-2.7 6-6 6H81.9c-2.1 1.5-4.3 2.9-6.6 4H109c5.5 0 10-4.5 10-10V37c0-5.5-4.5-10-10-10z" />
+                                <path fill="#2C3E50"
+                                    d="M57 27.8C76.9 27.8 93.2 44 93.2 64S76.9 100.2 57 100.2 20.8 83.9 20.8 64 37.1 27.8 57 27.8m0-4c-22.1 0-40.2 18-40.2 40.2s18 40.2 40.2 40.2 40.2-18 40.2-40.2S79.1 23.8 57 23.8z" />
+                                <path fill="#3B97D3"
+                                    d="M57 39.2c13.7 0 24.8 11.1 24.8 24.8S70.7 88.8 57 88.8 32.2 77.7 32.2 64 43.3 39.2 57 39.2m0-4c-15.9 0-28.8 12.9-28.8 28.8S41.1 92.8 57 92.8 85.8 79.9 85.8 64 72.9 35.2 57 35.2z" />
+                                <path fill="#2C3E50"
+                                    d="M84 25v-2.3c0-1.1 1.2-1.7 2.3-1.7H102c1.1 0 2 .6 2 1.7V25h4v-2.3c0-3.3-2.7-5.7-6-5.7H86.3C83 17 80 19.4 80 22.7V25h4z" />
+                                <path fill="#3B97D3"
+                                    d="M64 47.5c-4.5 0-8.2 3.7-8.2 8.2S59.5 64 64 64s8.2-3.7 8.2-8.2-3.7-8.3-8.2-8.3zM64 62c-3.4 0-6.2-2.8-6.2-6.2s2.8-6.2 6.2-6.2 6.2 2.8 6.2 6.2S67.4 62 64 62z" />
+                                <circle cx="103.7" cy="41" r="4.3" fill="#3B97D3" />
+                                <path fill="#2C3E50" d="M89 21h2v4h-2zM97 21h2v4h-2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="row" style="padding: 12px;">
+                        <div class="col-sm-2">
+                            <button type="button" class="btn btn-secondary btn-danger"
+                                onclick="history.back()">Cancel</button>
+                        </div>
+                        <div class="col-sm-8 text-center">
+                            <p id="counter" style="
+                                        font-size: xx-large;
+                                        color: #7d0e0e;
+                                        font-family: fantasy;
+                                        letter-spacing: 13px;
+                                    ">Exam start with in 30 min</p>
+                        </div>
+                        <div class="col-sm-2" style="white-space: nowrap;">
+                            <button type="button" class="btn btn-primary float-end btn-success start-exam-tour">Start
+                                exam</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="confirm-save-question" th:action="@{/exercise/confirm-save-question}">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <select class="form-control select-exercise-type">
+                                            <option>New exercise</option>
+                                            <option>Existing exercise</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-6 hide old-exe">
+                                        <select class="form-control select-exe">
+                                            <option>Select Existing exercise</option>
+                                            <option th:each="exercise : ${questionExerciseList}"
+                                                th:value="${exercise.exerciseName}" th:text="${exercise.exerciseName}">
+                                        </select>
+                                    </div>
+                                </div>
+                                <label for="new-exercise" class="col-form-label new-exe">New exercise:</label>
+                                <input type="text" class="form-control new-exe select-new" id="new-exercise"
+                                    name="newExercise">
+                            </div>
+                            <div class="qna"></div>
+                            <input type="hidden" id="preview_questions">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary confirm-question"
+                            progress-id-text="#confirm-progress-text" progress-id="#confirm-progress">
+                            <span class="btn-loading hide" id="confirm-progress">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...</span> <span class="btn-loading-text"
+                                id="confirm-progress-text">Confirm</span>
+
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+
+</html>

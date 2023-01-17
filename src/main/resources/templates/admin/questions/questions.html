@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading(utils.ucFirst(encodeDecode.decode(exerciseName)))}"></div>
+            <div class="btn-toolbar mb-2 mb-md-0" sec:authorize="hasRole('ROLE_TEACHER')">
+                <div class="btn-group me-2">
+                    <a type="button" class="btn btn-sm btn-outline-secondary" target="_blank"
+                        th:href="@{/exercise/download}">Export sample</a>
+                    <input type="file" name="file" id="excel-file" accept=".csv, text/csv" th:action="@{/exercise/export}"
+                        style="display:none;" />
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary upload-excel">
+                        <span class="btn-loading hide">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Importing...</span> <span class="btn-loading-text">Import</span>
+                    </button>
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary empty-exercise"
+                        progress-id-text="#empty-exercise-progress-text" progress-id="#empty-exercise-progress"
+                        th:empty-exercise-action="@{'/exercise/empty-exercise/'+ ${exerciseId}}">
+                        <span class="btn-loading hide" id="empty-exercise-progress">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Clearing lesson ...</span> <span class="btn-loading-text"
+                            id="empty-exercise-progress-text">Clear lesson</span>
+                    </button>
+
+                    <select id="courseIdModel" class="form-control courseIdModel" th:disabled="${courseId>0}"
+                        style="display: none;">
+                        <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.course_name}"
+                            th:selected="${course.id==courseId}">
+                    </select>
+                    <button type="button" class="btn btn-sm btn-outline-secondary reload-exercise"
+                        progress-id-text="#reload-exercise-progress-text" progress-id="#reload-exercise-progress"
+                        th:empty-exercise-action="@{'/exercise/empty-exercise/'+ ${exerciseId}}">
+                        <span class="btn-loading hide" id="reload-exercise-progress">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            Reloading...</span> <span class="btn-loading-text" id="reload-exercise-progress-text">Reload
+                            exercise</span>
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <form class="row justify-content-end hide create-exercise" style="display: none"
+            sec:authorize="hasRole('ROLE_TEACHER')" th:action="@{/exercise/create}" th:object="${course}" method="POST"
+            enctype="utf8">
+
+            <div class="mb-3">
+
+            </div>
+
+
+
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3 nn">More question</button>
+                <button type="button" class="btn btn-primary mb-3 save-questions">Save questions</button>
+            </div>
+        </form>
+
+        <div class="table-responsive" style="height: 80vh; padding-bottom: 30px;">
+            <table class="table table-striped" style="width: 100% !important;" id="myTable"
+                th:action="@{'/exercise/all-questions-list/' + ${exerciseId}}">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Questions</th>
+                        <th scope="col">Options</th>
+                        <th scope="col">Correct&nbsp;&nbsp;Answer</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col" width="150px !important ; text-align: center; vertical-align: middle;">Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="table-body-sn delete-action-question"
+                    th:delete-action="@{'/exercise/delete-single-questions/'}">
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Update Modal -->
+        <div class="modal fade" id="updateQuestion" tabindex="-1" aria-labelledby="updateQuestionLabel"
+            aria-hidden="true" data-bs-keyboard="false" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="updateQuestionLabel">Update question</h1>
+                        <button type="button" class="btn-close modal-hide" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="confirm-update-question-form" th:action="@{/exercise/confirm-save-question}">
+
+                            <div class="update-qna update-action-question"
+                                th:update-action="@{'/exercise/confirm-update-question/' + ${exerciseId}}"></div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary confirm-update-question"
+                            progress-id-text="#confirm-progress-text" progress-id="#confirm-progress">
+                            <span class="btn-loading hide" id="confirm-progress">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...</span> <span class="btn-loading-text" id="confirm-progress-text">Confirm
+                                Update</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="confirm-save-question" th:action="@{/exercise/confirm-save-question}">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <select class="form-control select-exercise-type">
+                                            <option>New exercise</option>
+                                            <option>Existing exercise</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-6 hide old-exe">
+                                        <select class="form-control select-exe">
+                                            <option>Select Existing exercise</option>
+                                            <option th:each="exercise : ${questionExerciseList}"
+                                                th:value="${exercise.exerciseName}" th:text="${exercise.exerciseName}">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="new-exercise" class="col-form-label new-exe">New exercise:</label>
+                                        <input type="text" class="form-control new-exe select-new" id="new-exercise"
+                                            name="newExercise">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="exam-time" class="col-form-label">Time minutes:</label>
+                                        <input type="text" class="form-control examTimeM " style="
+                                                        padding: 0px !important;
+                                                        height: 38px;
+                                                        text-align-last: center;
+                                                    " id="exam-time" th:value="${questionExercise.time}">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="numberOfQuestionPerStudent" class="col-form-label">Total question
+                                            per student:</label>
+                                        <input type="text" class="form-control numberOfQuestionPerStudentM " style="
+                                                        padding: 0px !important;
+                                                        height: 38px;
+                                                        text-align-last: center;
+                                                    " id="numberOfQuestionPerStudent" th:value="${questionExercise.numberOfQuestionPerStudent}">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="qna"></div>
+                            <input type="hidden" id="preview_questions">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary confirm-question"
+                            progress-id-text="#confirm-progress-text" progress-id="#confirm-progress">
+                            <span class="btn-loading hide" id="confirm-progress">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...</span> <span class="btn-loading-text"
+                                id="confirm-progress-text">Confirm</span>
+
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</body>
+
+</html>

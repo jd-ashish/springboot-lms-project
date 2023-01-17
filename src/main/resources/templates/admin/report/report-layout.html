@@ -1,0 +1,71 @@
+<th:block th:each="data : ${exerciseQuestion}">
+    <div class="my-3 p-3 bg-body rounded shadow-sm" style="border: 2px solid #e2e2e254;" >
+        <h6 class="pb-2 mb-0 float-start" style="margin-top: 4px !important;" th:text="${data.exerciseName}">Recent
+            updates</h6>
+        <svg xmlns="http://www.w3.org/2000/svg" clip-rule="evenodd" fill-rule="evenodd" stroke-linejoin="round"
+            stroke-miterlimit="2" viewBox="0 0 24 24"
+            style="height: 28px;width: 28px; transform: rotate(179deg); float: right;">
+            <path
+                d="m9.001 10.978h-3.251c-.412 0-.75-.335-.75-.752 0-.188.071-.375.206-.518 1.685-1.775 4.692-4.945 6.069-6.396.189-.2.452-.312.725-.312.274 0 .536.112.725.312 1.377 1.451 4.385 4.621 6.068 6.396.136.143.207.33.207.518 0 .417-.337.752-.75.752h-3.251v9.02c0 .531-.47 1.002-1 1.002h-3.998c-.53 0-1-.471-1-1.002z"
+                fill-rule="nonzero" />
+        </svg>
+        <hr style="margin-top: 34px !important;">
+        <div th:if="${obj.getExamReport(user.id,course.user.id,course.id,data.id)==null}">
+            <center><p>There was no examination in this exercise, please give any exercise to view the report.</p></center>
+        </div>
+        <h4 th:if="${obj.getExamReport(user.id,course.user.id,course.id,data.id)!=null}">Mark sheet</h4>
+        <div class="d-flex text-muted" th:if="${obj.getExamReport(user.id,course.user.id,course.id,data.id)!=null}">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Total required marks</th>
+                        <th>Minimum marks</th>
+                        <th>Obtained marks</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr >
+                        <td
+                            th:text="${utils.split(obj.getExamReport(user.id,course.user.id,course.id,data.id).questions,',').length*obj.getExamReport(user.id,course.user.id,course.id,data.id).exam.eachQuestionContains}">
+                        </td>
+                        <td th:text="${obj.getExamReport(user.id,course.user.id,course.id,data.id).exam.minimumMarks}">
+                        </td>
+                        <td th:text="${obj.getExamReport(user.id,course.user.id,course.id,data.id).finalMarks}"></td>
+                        <th
+                            th:text="${(int.parseInt(obj.getExamReport(user.id,course.user.id,course.id,data.id).finalMarks)<obj.getExamReport(user.id,course.user.id,course.id,data.id).exam.minimumMarks)? 'Fail':'Pass'}">
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex text-muted">
+
+        </div>
+        <small class="d-block text-end mt-3" th:if="${obj.getExamReport(user.id,course.user.id,course.id,data.id)!=null}">
+            <a href="#" class="review-question-list" modal="1"
+                th:action="@{'/exam/question-review/'+${obj.getExamReport(user.id,course.user.id,course.id,data.id).id}}"
+                th:view="${'.review-question-list-view-'+data.id}">View question answer</a>
+        </small>
+    </div>
+
+    <div class="modal fade" id="review-questions" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Review question</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div th:class="${'review-question-list-view-'+data.id}"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

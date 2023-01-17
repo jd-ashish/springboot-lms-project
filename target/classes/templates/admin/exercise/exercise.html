@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="admin/base::layout(~{::section})"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+    <section>
+
+
+        <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <div th:utext="${utils.backHeading('Exercise')}"></div>
+            <div class="btn-toolbar mb-2 mb-md-0" sec:authorize="hasRole('ROLE_TEACHER')">
+                <div class="btn-group me-2">
+                    <a type="button" class="btn btn-sm btn-outline-secondary" target="_blank"
+                        th:href="@{/exercise/download}">Download csv sample</a>
+                    <input type="file" name="file" id="excel-file" th:action="@{/exercise/export}"
+                        accept=".csv, text/csv" style="display:none;" />
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary upload-excel">
+                        <span class="btn-loading hide"><span class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            Importing...</span> <span class="btn-loading-text">Add via csv</span>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary toogle" to-id=".create-exercise">
+                        Create Exercise
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <form class="row justify-content-end hide create-exercise" style="display: none"
+            sec:authorize="hasRole('ROLE_TEACHER')" th:action="@{/exercise/create}" th:object="${course}" method="POST"
+            enctype="utf8">
+
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <select class="form-control select-exercise-type-normal-form">
+                            <option>New exercise</option>
+                            <option>Existing exercise</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-6 hide old-exe-normal-form">
+                        <select class="form-control select-exe-normal-form">
+                            <option>Select Existing exercise</option>
+                            <option th:each="exercise : ${questionExerciseList}" th:value="${exercise.exerciseName}"
+                                th:text="${exercise.exerciseName}">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label for="new-exercise-normal-form" class="col-form-label new-exe-normal-form">New
+                            exercise:</label>
+                        <input type="text" class="form-control new-exe-normal-form select-new-normal-form"
+                            id="new-exercise-normal-form">
+                    </div>
+                    <div class="col-sm-2">
+                        <label for="exam-time" class="col-form-label">Time minutes:</label>
+                        <input type="number" class="form-control exam-time " style="
+                                            padding: 0px !important;
+                                            height: 38px;
+                                            text-align-last: center;
+                                        " id="exam-time">
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="numberOfQuestionPerStudent" class="col-form-label">Total question per
+                            student:</label>
+                        <input type="number" class="form-control numberOfQuestionPerStudent " style="
+                                            padding: 0px !important;
+                                            height: 38px;
+                                            text-align-last: center;
+                                        " id="numberOfQuestionPerStudent">
+                    </div>
+                </div>
+
+            </div>
+            <div class="mb-3">
+                <label for="courseId" class="form-label">Course</label>
+                <select id="courseId" class="form-control courseId" th:disabled="${courseId>0}">
+                    <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.course_name}"
+                        th:selected="${course.id==courseId}">
+                </select>
+            </div>
+
+            <div class="row next">
+
+            </div>
+
+
+            <div class="col-auto">
+                <button type="button" class="btn btn-primary mb-3 nn">More question</button>
+                <button type="button" class="btn btn-primary mb-3 save-questions">Save questions</button>
+            </div>
+        </form>
+
+        <div class="table-responsive" style="height: 99vh;">
+
+            <form method="get" th:accept="@{/exercise/search}">
+                <input type="search" class="form-control float-end" style="width: 280px;" name="search"
+                    th:value="${search}" placeholder="Search Exercise name" />
+            </form>
+
+            <table class="table table-striped" th:if="${isSearch}">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Exercise Name</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody th:with="count=0" class="table-body-sn">
+                    <th:block th:each="exercise : ${searchList}">
+                        <tr>
+                            <td>1</td>
+                            <td><a th:text="${exercise.exerciseName}"
+                                    th:href="@{'/questions/'+${encodeDecode.encode(exercise.id)}+'/'+${encodeDecode.encode(exercise.exerciseName)}+'/'+ ${courseId}}"></a>
+                            </td>
+                            <td th:text="${exercise.createdAt}"></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item c-p"
+                                                th:href="@{'/exercise/delete/'+${encodeDecode.encode(exercise.id)}}">Delete
+                                                exercise</a></li>
+                                        <li><a class="dropdown-item">Update exercise</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+
+                </tbody>
+            </table>
+            <h4 class="float-start" style="padding-bottom: 24px;">Recent 5 record
+            </h4>
+
+
+            <div th:if="${questionExerciseList.size()==0}">
+                <center class="center">
+                    No any exercise found!
+                </center>
+            </div>
+            <table class="table table-striped" th:if="${questionExerciseList.size()>0}">
+                
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Exercise Name</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">number_of_question_per_student</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">minimumMarks</th>
+                        <th scope="col">isNegative</th>
+                        <th scope="col">eachQuestionContains</th>
+                        <th scope="col">Action</th>
+                       
+                    </tr>
+                </thead>
+                <tbody th:with="count=0" class="table-body-sn">
+                    <th:block th:each="exercise : ${questionExerciseList}">
+                        <tr>
+                            <td>1</td>
+                            <td><a th:text="${exercise.exerciseName}"
+                                    th:href="@{'/questions/'+${encodeDecode.encode(exercise.id)}+'/'+${encodeDecode.encode(exercise.exerciseName)}+'/'+ ${courseId}}"></a>
+                            </td>
+                            <td th:text="${exercise.createdAt}"></td>
+                            <td th:text="${exercise.numberOfQuestionPerStudent}"></td>
+                            <td th:text="${exercise.time}"></td>
+                            <td th:text="${exercise.minimumMarks}"></td>
+                            <td th:text="${exercise.isNegative}"></td>
+                            <td th:text="${exercise.eachQuestionContains}"></td>
+                            <td>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-sm btn-danger dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item c-p"
+                                                th:href="@{'/exercise/delete/'+${encodeDecode.encode(exercise.id)}}">Delete
+                                                exercise</a></li>
+                                        <li><a class="dropdown-item c-p updateExercise" th:id="${exercise.id}"
+                                                th:time="${exercise.time}"
+                                                th:numberOfQuestionPerStudent="${exercise.numberOfQuestionPerStudent}"
+                                                th:exerciseName="${exercise.exerciseName}"
+                                                th:minimumMarks="${exercise.minimumMarks}"
+                                                th:isNegative="${exercise.isNegative}"
+                                                th:eachQuestionContains="${exercise.eachQuestionContains}">Update
+                                                exercise</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="updateExercise" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Update exercise</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" class="id" />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="new-exercise-normal-form" class="col-form-label new-exe-normal-form">New
+                                    exercise:</label>
+                                <input type="text" class="form-control exerciseName" id="exerciseName">
+                            </div>
+                            <div class="col-sm-2">
+                                <label for="time" class="col-form-label">Time minutes:</label>
+                                <input type="number" class="form-control time" style="
+                                                    padding: 0px !important;
+                                                    height: 38px;
+                                                    text-align-last: center;
+                                                " id="exam-time">
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="numberOfQuestionPerStudentUpdate" class="col-form-label">Total question per
+                                    student:</label>
+                                <input type="number" class="form-control numberOfQuestionPerStudentUpdate " style="
+                                                    padding: 0px !important;
+                                                    height: 38px;
+                                                    text-align-last: center;
+                                                " id="numberOfQuestionPerStudentUpdate">
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-sm-4">
+                                <label for="new-exercise-normal-form" class="col-form-label new-exe-normal-form">Is
+                                    negative mark:</label>
+                                <input type="checkbox" class="form-check-input isNegative" style="
+                                                                            margin-top: 36px;
+                                                                            float: left;
+                                                                            margin-right: -27px;
+                                                                            cursor: pointer;
+                                                                            height: 25px;
+                                                                            width: 25px;
+                                                                        ">
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="eachQuestionContains" class="col-form-label">Each Question Contains
+                                    marks:</label>
+                                <input type="number" class="form-control eachQuestionContains " style="
+                                                    padding: 0px !important;
+                                                    height: 38px;
+                                                    text-align-last: center;
+                                                " id="eachQuestionContains">
+                                <small class="text-danger">1question contains 1 marks or 2 marks..</small>
+                            </div>
+                            <div class="col-sm-4">
+                                <label for="minimumMarks" class="col-form-label">Minimum Marks:</label>
+                                <input type="number" class="form-control minimumMarks " style="
+                                                    padding: 0px !important;
+                                                    height: 38px;
+                                                    text-align-last: center;
+                                                " id="minimumMarks" placeholder="Minimum Marks">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary updateExerciseData"
+                            th:action="@{'/exercise/update'}">Save changes</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="confirm-save-question" th:action="@{/exercise/confirm-save-question}">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <select class="form-control select-exercise-type">
+                                            <option>New exercise</option>
+                                            <option>Existing exercise</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-6 hide old-exe">
+                                        <select class="form-control select-exe">
+                                            <option>Select Existing exercise</option>
+                                            <option th:each="exercise : ${questionExerciseList}"
+                                                th:value="${exercise.exerciseName}" th:text="${exercise.exerciseName}">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <label for="new-exercise" class="col-form-label new-exe">New exercise:</label>
+                                        <input type="text" class="form-control new-exe select-new" id="new-exercise"
+                                            name="newExercise">
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label for="exam-time" class="col-form-label">Time minutes:</label>
+                                        <input type="number" class="form-control examTimeM " style="
+                                                            padding: 0px !important;
+                                                            height: 38px;
+                                                            text-align-last: center;
+                                                        " id="exam-time">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <label for="numberOfQuestionPerStudent" class="col-form-label">Total question
+                                            per student:</label>
+                                        <input type="number" class="form-control numberOfQuestionPerStudentM " style="
+                                                            padding: 0px !important;
+                                                            height: 38px;
+                                                            text-align-last: center;
+                                                        " id="numberOfQuestionPerStudent">
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="mb-3">
+                                <label for="courseIdModel" class="form-label">Course</label>
+                                <select id="courseIdModel" class="form-control courseIdModel"
+                                    th:disabled="${courseId>0}">
+                                    <option th:each="course : ${courseList}" th:value="${course.id}"
+                                        th:text="${course.course_name}" th:selected="${course.id==courseId}">
+                                </select>
+                            </div>
+                            <div class="qna"></div>
+                            <input type="hidden" id="preview_questions">
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary confirm-question"
+                            progress-id-text="#confirm-progress-text" progress-id="#confirm-progress">
+                            <span class="btn-loading hide" id="confirm-progress">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Saving...</span> <span class="btn-loading-text"
+                                id="confirm-progress-text">Confirm</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="admin/base::layout(~{::section})"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+
+
+</head>
+
+<body>
+
+<section>
+
+
+    <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div th:utext="${utils.backHeading('My Courses')}"></div>
+
+
+    </div>
+
+    <div class="table-responsive" style="height: 99vh;">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Topic</th>
+                <th scope="col">Author</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody class="table-body-sn">
+            <div th:if="${courseList.size()==0}">
+                <tr>
+                    <td colspan="6">No data found</td>
+                </tr>
+            </div>
+
+            <th:block th:each="course : ${courseList}">
+                <tr>
+                    <td>1</td>
+
+                    <td><a th:text="${course.course_name}"></a></td>
+                    <td th:text="${course.course_topic}">topic</td>
+                    <td th:text="${course.name}">Ashish</td>
+                    <td th:text="${course.status}">Ashish</td>
+                    <td th:if="${course.is_enrollment}">
+                        <a th:href="@{'/course/'+${utils.uri(course.course_name,false)}+'/'+${course.course_id}}"
+                           class="learn-lesson"
+                           th:text="${(course.is_enrollment)? 'Continue':'waiting for response'}"
+                           style="
+                                    text-decoration: auto;
+                                    color: green;
+                                    font-size: 15px;
+                                    text-transform: uppercase;
+                                    font-family: ui-monospace;
+                                "
+                        ></a>
+                    </td>
+                    <td th:if="${!course.is_enrollment}">
+                        <a href="#" style="
+                                        text-decoration: auto;
+                                        color: red;
+                                        font-size: 15px;
+                                        text-transform: uppercase;
+                                        font-family: ui-monospace;
+                                    "
+                           th:text="${(course.is_enrollment)? 'Active':'waiting for response'}"
+                        ></a>
+                    </td>
+                </tr>
+            </th:block>
+
+
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+</body>
+
+</html>
